@@ -1,0 +1,325 @@
+version: "3.8"
+
+services:
+  db:
+    image: nexus.cekino.local:5000/postgres:13
+    container_name: postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Cekino.123!
+    ports:
+      - "7100:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/00_init.sql
+      - ./karcin_auth.sql:/docker-entrypoint-initdb.d/01_karcin_auth.sql
+      - ./karcin_log.sql:/docker-entrypoint-initdb.d/02_karcin_log.sql
+      - ./karcin_admin.sql:/docker-entrypoint-initdb.d/04_karcin_admin.sql
+      - ./guacamole.sql:/docker-entrypoint-initdb.d/05_guacamole.sql
+      - ./karcin_client.sql:/docker-entrypoint-initdb.d/06_karcin_client.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - my_network
+
+  guacamole:
+    image: nexus.cekino.local:5000/guacamole:latest
+    container_name: guacamole
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+      guacd:
+        condition: service_started
+    environment:
+      GUACD_HOSTNAME: guacd
+      POSTGRES_HOSTNAME: db
+      POSTGRES_DATABASE: guacamole
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Cekino.123!
+    ports:
+      - "8080:8080"
+    volumes:
+      - guacamole_data:/root/.guacamole
+      - /home/server/Gardiyan/Repo:/home/gardiyan/Repo:rw
+
+    networks:
+      - my_network
+
+  guacd:
+    image: nexus.cekino.local:5000/guacd:latest
+    container_name: guacd
+    ports:
+      - "4822:4822"
+    restart: always
+    networks:
+      - my_network
+
+  auth_frontend:
+    image: dockerdev.cekino.com/auth_frontend:2.5.3.14
+    container_name: auth_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - auth_frontend_data:/data
+      - /home/server/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - /home/server/Gardiyan/License:/home/gardiyan/Gardiyan/License
+    networks:
+      - my_network
+
+  auth:
+    image: dockerdev.cekino.com/auth:2.5.3.15
+    container_name: auth
+    restart: always
+    ports:
+      - "7281:8081"
+    volumes:
+      - auth_data:/data
+      - ./etcAuth/com.karcin.security.datasource.postgres.cfg:/opt/karaf/etc/com.karcin.security.datasource.postgres.cfg
+      - /home/server/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - /home/server/Gardiyan/License:/home/gardiyan/Gardiyan/License
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - my_network
+
+  client_frontend:
+    image: dockerdev.cekino.com/client_frontend:2.5.3.9
+    container_name: client_frontend
+    restart: always
+    ports:
+      - "3005:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - auth_frontend_data:/data
+      - /home/server/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - /home/server/Gardiyan/License:/home/gardiyan/Gardiyan/License
+    networks:
+      - my_network
+
+  client:
+    image: dockerdev.cekino.com/client:2.5.3.14
+    container_name: client
+    restart: always
+    ports:
+      - "7288:8081"
+    volumes:
+      - ./etcClient/com.karcin.client.datasource.cfg:/opt/karaf/etc/com.karcin.client.datasource.cfg
+      - ./etcClient/com.karcin.client.cfg:/opt/karaf/etc/com.karcin.client.cfg
+      - ./etcClient/com.karcin.cfg:/opt/karaf/etc/com.karcin.cfg
+      - /home/server/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - /home/server/Gardiyan/License:/home/gardiyan/Gardiyan/License
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - my_network
+
+
+
+  admin_frontend:
+    image: dockerdev.cekino.com/admin_frontend:2.5.3.10
+    container_name: admin_frontend
+    restart: always
+    ports:
+      - "3003:80"
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - admin_frontend_data:/data
+      - /home/server/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    networks:
+      - my_network
+
+  admin:
+    image: dockerdev.cekino.com/admin:2.5.3.6
+    container_name: admin
+    restart: always
+    ports:
+      - "7283:8081"
+    volumes:
+      - admin_data:/data
+      - ./etcAdmin/com.karcin.admin.datasource.cfg:/opt/karaf/etc/com.karcin.admin.datasource.cfg
+      - ./etcAdmin/com.karcin.admin.cfg:/opt/karaf/etc/com.karcin.admin.cfg
+      - /home/server/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - my_network
+
+
+#  mdm:
+#    image: dockerdev.cekino.com/mdm:2.5.3.2
+#    container_name: mdm
+#    restart: always
+#    ports:
+#      - "7290:8081"
+#    volumes:
+#      - mdm_data:/data
+#      - ./etcMDM/com.karcin.mdm.datasource.cfg:/opt/karaf/etc/com.karcin.mdm.datasource.cfg
+#      - ./etcMDM/com.karcin.mdm.cfg:/opt/karaf/etc/com.karcin.mdm.cfg
+#      - /home/server/Gardiyan/Repo:/home/gardiyan/Repo:rw
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#      auth:
+#        condition: service_started
+#    networks:
+#      - my_network
+
+  log_center:
+    image: dockerdev.cekino.com/log_center:2.5.3.5
+    container_name: log_center
+    restart: always
+    ports:
+      - "5224:5224"
+    volumes:
+      - log_center_data:/data
+      - ./etcLC/com.karcin.log.datasource.cfg:/opt/karaf/etc/com.karcin.log.datasource.cfg
+      - ./etcLC/com.karcin.log.cfg:/opt/karaf/etc/com.karcin.log.cfg
+      - /home/server/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    depends_on:
+      db:
+        condition: service_healthy
+#      mdm:
+#        condition: service_started
+    networks:
+      - my_network
+
+  nginx:
+    image: nexus.cekino.local:5000/nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "443:443"
+    volumes:
+      - nginx_data:/data
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/ssl/mycerts:/etc/nginx/certs:ro
+      - /home/server/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    depends_on:
+      auth:
+        condition: service_started
+    networks:
+      - my_network
+
+  redis:
+    container_name: redis
+    ports:
+      - "6379:6379"
+    image: nexus.cekino.local:5000/redis:6.2-alpine
+    restart: always
+    command: redis-server --requirepass Cekino.123! --save "" --appendonly no
+    volumes:
+      - redis_data:/data
+    networks:
+      - my_network
+
+  rabbitmq:
+    hostname: "rabbit1"
+    image: nexus.cekino.local:5000/rabbitmq:3-management-alpine
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - my_network
+
+  mongodb:
+    image: nexus.cekino.local:5000/mongo:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: gardiyan
+      MONGO_INITDB_ROOT_PASSWORD: Cekino.123!
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - my_network
+
+        #  openfire:
+        #    image: sp9989/openfire:latest
+        #    container_name: openfire
+        #    ports:
+        #      - "9090:9090"
+        #      - "9091:9091"
+        #      - "5222:5222"
+        #      - "5269:5269"
+        #    volumes:
+        #      - openfire_data:/data
+        #      - ./backup_mdm/conf:/opt/openfire/conf
+        #      - ./backup_mdm/logs:/opt/openfire/logs
+        #      - ./backup_mdm/plugins:/opt/openfire/plugins
+        #    depends_on:
+        #      db:
+        #        condition: service_healthy
+        #      rabbitmq:
+        #        condition: service_started
+        #    networks:
+        #      - my_network
+        #    restart: always
+
+  openfire:
+    image: nexus.cekino.local:5000/openfire:latest
+    container_name: openfire
+    ports:
+      - "9090:9090"
+      - "9091:9091"
+      - "5222:5222"
+      - "5269:5269"
+    volumes:
+      - /home/server/Gardiyan/openfire_backup/conf:/opt/openfire/conf:rw  
+      - /home/server/Gardiyan/openfire_backup/logs:/opt/openfire/logs:rw  
+      - /home/server/Gardiyan/openfire_backup/plugins:/opt/openfire/plugins:rw  
+      - /home/server/Gardiyan/openfire_backup/resources:/opt/openfire/resources:rw  
+      - /home/server/Gardiyan/openfire_backup/bin:/opt/openfire/bin:rw  
+    depends_on:
+      db:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_started
+    networks:
+      - my_network
+    restart: always
+volumes:
+  db_data:
+  auth_frontend_data:
+  auth_data:
+  admin_frontend_data:
+  admin_data:
+  mdm_frontend_data:
+  mdm_data:
+  log_center_data:
+  nginx_data:
+  redis_data:
+  rabbitmq_data:
+  mongodb_data:
+  openfire_data:
+  guacamole_data:
+networks:
+  my_network:
+    driver: bridge

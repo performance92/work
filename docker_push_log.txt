@@ -1,0 +1,1371 @@
+Log Dosyası: docker_push_log.txt
+Bu imajla çalışan container(lar) bulundu: guacamole/guacd:latest. İşleme devam ediliyor...
+Etiketleniyor: guacamole/guacd:latest -> nexus.cekino.local:5000/nexus.cekino.local/guacamole/guacd:latest
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/guacamole/guacd:latest
+Docker Inspect Çıktısı (guacamole/guacd:latest):
+[
+    {
+        "Id": "sha256:0ea6a85cd4dc8d269683c4c9f8d196fb0c2c381449154393f76ea1223688e961",
+        "RepoTags": [
+            "guacamole/guacd:latest",
+            "nexus.cekino.local:5000/nexus.cekino.local/guacamole/guacd:latest"
+        ],
+        "RepoDigests": [
+            "guacamole/guacd@sha256:9681bb7822fe5654c4e0310d28d2ab5b9149608edddf6bdcf9038fe3a3c8ca52",
+            "nexus.cekino.local:5000/nexus.cekino.local/guacamole/guacd@sha256:9681bb7822fe5654c4e0310d28d2ab5b9149608edddf6bdcf9038fe3a3c8ca52"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-12-05T02:36:17.343584701Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "guacd",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "4822/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "LC_ALL=C.UTF-8",
+                "LD_LIBRARY_PATH=/opt/guacamole/lib",
+                "GUACD_LOG_LEVEL=info"
+            ],
+            "Cmd": [
+                "/bin/sh",
+                "-c",
+                "/opt/guacamole/sbin/guacd -b 0.0.0.0 -L $GUACD_LOG_LEVEL -f"
+            ],
+            "Healthcheck": {
+                "Test": [
+                    "CMD-SHELL",
+                    "nc -z 127.0.0.1 4822 || exit 1"
+                ],
+                "Interval": 300000000000,
+                "Timeout": 5000000000
+            },
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "/",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 241061917,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/2ccad80d4f6210dbb7a0c3fe96d411d61ca8612ce8d48ac503924ef8cbe749e4/diff:/var/lib/docker/overlay2/68f83ba4896b8bd00089db33cc52975a5c51a9e70bbe6ab7db7bb813062a75f6/diff:/var/lib/docker/overlay2/d5a98bafc08b6488d7fce03899d62f675c7ea0637a80fa25beb93069a1d9f8fb/diff:/var/lib/docker/overlay2/80b553c52c27172a5c18861eef71411ab980ff2f8f59a721eb9b005d2187addd/diff",
+                "MergedDir": "/var/lib/docker/overlay2/4f2f4328985d2051c38731f34a0af9e0d5528c5cbb53e6952bcbe97efaf7b635/merged",
+                "UpperDir": "/var/lib/docker/overlay2/4f2f4328985d2051c38731f34a0af9e0d5528c5cbb53e6952bcbe97efaf7b635/diff",
+                "WorkDir": "/var/lib/docker/overlay2/4f2f4328985d2051c38731f34a0af9e0d5528c5cbb53e6952bcbe97efaf7b635/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:f9fc769d335082905a3e43c83f2a6d11b413556f9d156ab0fbe3166d256c0d99",
+                "sha256:5a17ee8670bc13a9cf7c08394176be11f4709452ed93dfe034437144f451c2e5",
+                "sha256:4aa25617c49dff2231afd06869d524da873899a1ce85f40a2602fd8f37c694f0",
+                "sha256:288d058d4672d01fe169232b26139b7ca45241a9f57ab597ecc638eb54e5ae36",
+                "sha256:70aa13e1b49af0259cd0735964087159a9b9915acc63ef8d664fff6eb5ca4c87"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:14:29.752741576Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: guacamole/guacamole:latest. İşleme devam ediliyor...
+Etiketleniyor: guacamole/guacamole:latest -> nexus.cekino.local:5000/nexus.cekino.local/guacamole/guacamole:latest
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/guacamole/guacamole:latest
+Docker Inspect Çıktısı (guacamole/guacamole:latest):
+[
+    {
+        "Id": "sha256:973bd1f05ebf19b91d7c99d2c3d52e31b902ee8a43dcc28dd678ad7ad3955788",
+        "RepoTags": [
+            "guacamole/guacamole:latest",
+            "nexus.cekino.local:5000/nexus.cekino.local/guacamole/guacamole:latest"
+        ],
+        "RepoDigests": [
+            "guacamole/guacamole@sha256:b2031f349dcde7a7c8853c08ddb14e62b48e7e77eea5fc4e880f124c80dbc160",
+            "nexus.cekino.local:5000/nexus.cekino.local/guacamole/guacamole@sha256:b2031f349dcde7a7c8853c08ddb14e62b48e7e77eea5fc4e880f124c80dbc160"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-12-05T01:12:56.802633289Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "guacamole",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "8080/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/tomcat/bin:/opt/java/openjdk/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "JAVA_HOME=/opt/java/openjdk",
+                "LANG=en_US.UTF-8",
+                "LANGUAGE=en_US:en",
+                "LC_ALL=en_US.UTF-8",
+                "JAVA_VERSION=jdk8u402-b06",
+                "CATALINA_HOME=/usr/local/tomcat",
+                "TOMCAT_NATIVE_LIBDIR=/usr/local/tomcat/native-jni-lib",
+                "LD_LIBRARY_PATH=/usr/local/tomcat/native-jni-lib",
+                "GPG_KEYS=05AB33110949707C93A279E3D3EFE6B686867BA6 07E48665A34DCAFAE522E5E6266191C37C037D42 47309207D818FFD8DCD3F83F1931D684307A10A5 541FBE7D8F78B25E055DDEE13C370389288584E7 5C3C5F3E314C866292F359A8F3AD5C94A67F707E 765908099ACF92702C7D949BFA0C35EA8AA299F1 79F7026C690BAA50B92CD8B66A3AD3F4F22C4FED 9BA44C2621385CB966EBA586F72C284D731FABEE A27677289986DB50844682F8ACB77FC2E86E29AC A9C5DF4D22E99998D9875A5110C01C5A2F6059E7 DCFD35E0BF8CA7344752DE8B6FB21E8933C60243 F3A04C595DB5B6A5F1ECA43E3B7BBB100D811BBE F7DA48BB64BCB84ECBA7EE6935CD23C10D498E23",
+                "TOMCAT_MAJOR=8",
+                "TOMCAT_VERSION=8.5.100",
+                "TOMCAT_SHA512=14d8dca911fe9c5b7e636e054ac2e70a532ddc358eda83ed3679e51df8baa7a397cabb8a5777b815014d46064cbc33e8d9ea75b9426dccdae54fb3913d9a54f0"
+            ],
+            "Cmd": [
+                "/opt/guacamole/bin/start.sh"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "/opt/guacamole",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "org.opencontainers.image.ref.name": "ubuntu",
+                "org.opencontainers.image.version": "22.04"
+            }
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 511186556,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/0f3c4123dc2e541e91211505342eb2c0bd7a2aac971b4c8699f8a915cca5703c/diff:/var/lib/docker/overlay2/f255d331deed5eb394d7081f182667bb3bf26825f2f7b1282a7eadd702228b6b/diff:/var/lib/docker/overlay2/5e7c2fd5db9d3cf2adc5aedb738529c0f3df5bdf7c2b4a5803c0c40cc09b0ca3/diff:/var/lib/docker/overlay2/b1181aa83a39213508e3d5a79c819334ec0f2f33b39d85f03be800cb298de3a7/diff:/var/lib/docker/overlay2/0fca22c2e600967ee3e50099dc34bec06c83298e2d2c2a19b40ccb30df7160f9/diff:/var/lib/docker/overlay2/f2fdb891db21cfc96d3405e2ee083577d5bb739361f4f6fc9b86c9adb2dd3969/diff:/var/lib/docker/overlay2/95589781a5034bd33630e3fb7cc1ff8dd47c747f57b7946880f522376323f321/diff:/var/lib/docker/overlay2/f6de4965ae6f86d716b9c1dde56902e443dbf635940d16c201370c604f37c5ca/diff:/var/lib/docker/overlay2/bee9a1910300163f4c35d7c7dd4f8e75b9c428baca3f718811a813555074cbde/diff:/var/lib/docker/overlay2/7a09ce350c473aeb18ed4218be37cd97718c1ff3d2d23fcdaadbf18328f93e28/diff:/var/lib/docker/overlay2/4603a1da16fab5846139901585a93078ceb5ba6af3a321102d8380d234b5b458/diff:/var/lib/docker/overlay2/8256c67d061c15f775dfb9929e0420b668f21d6515b6c6b391150d3301f81543/diff",
+                "MergedDir": "/var/lib/docker/overlay2/50dea24c4573371f5aacca264059b125c8d9b8379b0b48366a01d0992f547819/merged",
+                "UpperDir": "/var/lib/docker/overlay2/50dea24c4573371f5aacca264059b125c8d9b8379b0b48366a01d0992f547819/diff",
+                "WorkDir": "/var/lib/docker/overlay2/50dea24c4573371f5aacca264059b125c8d9b8379b0b48366a01d0992f547819/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:5498e8c22f6996f25ef193ee58617d5b37e2a96decf22e72de13c3b34e147591",
+                "sha256:90c4c6bb3fef61dfc83cb1c5ac5bf1702ed7e8ffb9773c6dced5a1727c54f34a",
+                "sha256:107837d849e9d987a75031dec798d4fc999d5c794d1f5dd81d0cc5cabfa7810b",
+                "sha256:e1454f7e718405454633814157e6a79a482d078a16618f9f8d53367b6289ba5e",
+                "sha256:7334fe6e30471af2d5586e509984a07d718d63b27205bbf0b55aecbf216b07a0",
+                "sha256:5509711aa509a7544ff976c65d324569921ef80a8272f9adba386cbb9abdfa3a",
+                "sha256:c14f86b282022bb6b166e52efe114cf820afb5bb56df0da8dac0e8b7b75d7481",
+                "sha256:662772c91ae431a602b5f48a18184092243db05de6d2a87339a1d0681669743e",
+                "sha256:d9383540b407ad807580db1caaa70f2c7300626d7f2ab7597d98a9292aac3400",
+                "sha256:12bf4dead172cdeafeba0036abbaa5cd27feabdb4da1bc46b3031a1a9027bdac",
+                "sha256:49f2305199b2c49acfa0c7f01c6e010c8d5f7ed6ae20f1ee4f76fd712a0f7d6d",
+                "sha256:056d597f4d1432ceeb3a2a8195fdb59f488e042f3a7f338c4ef25f64d9bc7259",
+                "sha256:4888e3da0f86df9bb67e5f90b513d462ce7e64f0bd85629223cc11fc8893b8d0"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:14:56.840832062Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: dockerdev.cekino.com/admin:2.5.3.4. İşleme devam ediliyor...
+Etiketleniyor: dockerdev.cekino.com/admin:2.5.3.4 -> nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/admin:2.5.3.4
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/admin:2.5.3.4
+Docker Inspect Çıktısı (dockerdev.cekino.com/admin:2.5.3.4):
+[
+    {
+        "Id": "sha256:7bb53d99cbbaa157a076250fea47c8fbe0d2e7b72fe54ff2474e72e54ceca4b0",
+        "RepoTags": [
+            "dockerdev.cekino.com/admin:2.5.3.4",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/admin:2.5.3.4"
+        ],
+        "RepoDigests": [
+            "dockerdev.cekino.com/admin@sha256:a1d24d0b34677049f877df2dd93503af448f9123948daa2409d2107fdc52ff37",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/admin@sha256:a1d24d0b34677049f877df2dd93503af448f9123948daa2409d2107fdc52ff37"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-12-04T14:45:52.866636408Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "1099/tcp": {},
+                "44444/tcp": {},
+                "8101/tcp": {},
+                "8181/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/opt/karaf/bin:/usr/local/openjdk-8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "JAVA_HOME=/usr/local/openjdk-8",
+                "LANG=C.UTF-8",
+                "JAVA_VERSION=8u342",
+                "KARAF_VERSION=4.0.10",
+                "KARAF_HOME=/opt/karaf"
+            ],
+            "Cmd": [
+                "karaf"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 506903424,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/a9cb0ae8aec1957e5fae5ebc3261ba092902e930925b378fd6cf06e99317b00f/diff:/var/lib/docker/overlay2/310382052c6626be4ad9f577c73e94fc580a214941b55c5f8b4d96aa501ee95f/diff:/var/lib/docker/overlay2/141d0d9232ec2e51970589698c20dbbf42478a9550cea02bc41c46ee1da29ffe/diff:/var/lib/docker/overlay2/2ee3a231498d5ef2467b894f50bc20e8a2549b1c2168ead57066d55160184f92/diff:/var/lib/docker/overlay2/7f7472a652cedbe3f86177befa609c5bd10092d02296d3c46f22c18fb2eb6b23/diff:/var/lib/docker/overlay2/d3a50bd5a3fb96193916412f63f4bd5d5a1e7c5d6b099013ddf3c2e5db3cd4fa/diff:/var/lib/docker/overlay2/b23c8d359a607d5b951cd5cbe76188206a1aa57b40ffc711f03b8b78958b899d/diff",
+                "MergedDir": "/var/lib/docker/overlay2/01d14b2457d07ca8e9b01aebbf425172c3f9f1196b7876e5621da16f6ba08130/merged",
+                "UpperDir": "/var/lib/docker/overlay2/01d14b2457d07ca8e9b01aebbf425172c3f9f1196b7876e5621da16f6ba08130/diff",
+                "WorkDir": "/var/lib/docker/overlay2/01d14b2457d07ca8e9b01aebbf425172c3f9f1196b7876e5621da16f6ba08130/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:92a4e8a3140f7a04a0e5a15793adef2d0e8889ed306a8f95a6cfb67cecb5f212",
+                "sha256:eafe6e032dbd1979848a323c4c84071be765d175661d6ea2ac148dbd673c6713",
+                "sha256:cd5a0a9f1e018d0861ca738588413c2906a36f5b5ae87906e8718961e44c3a7f",
+                "sha256:b66078cf4b4146848eb677f38d6fa83559b6c92d010d5cff63759bedd87e318e",
+                "sha256:41adace656ec8715434d094d145a0319ce5a8783faf158d87e26755e29d98a21",
+                "sha256:06c4f01939439729ba44af3ae5b000f6da200e659d4494c983f8538f18c8204b",
+                "sha256:fc32baa9c7661eff956fc6644efb53d13f81f7b757c6d347bbf7f288f773679a",
+                "sha256:80775ed44c07bbc704e0eecbe708240a2567518038eadbbf6af65b546bf08b4a"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:15:19.278767476Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: dockerdev.cekino.com/client:2.5.3.12. İşleme devam ediliyor...
+Etiketleniyor: dockerdev.cekino.com/client:2.5.3.12 -> nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/client:2.5.3.12
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/client:2.5.3.12
+Docker Inspect Çıktısı (dockerdev.cekino.com/client:2.5.3.12):
+[
+    {
+        "Id": "sha256:1b856290b8d9940e54877142c2907eb698a236d5d54c310e5a99e2d5300eefe1",
+        "RepoTags": [
+            "dockerdev.cekino.com/client:2.5.3.12",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/client:2.5.3.12"
+        ],
+        "RepoDigests": [
+            "dockerdev.cekino.com/client@sha256:41d4208056def0198431789e6a8c2e612ee3f19699e596acff3bc77e245fe6f9",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/client@sha256:41d4208056def0198431789e6a8c2e612ee3f19699e596acff3bc77e245fe6f9"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-12-04T12:53:43.073985968Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "1099/tcp": {},
+                "44444/tcp": {},
+                "7200/tcp": {},
+                "8101/tcp": {},
+                "8181/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/opt/karaf/bin:/usr/local/openjdk-8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "JAVA_HOME=/usr/local/openjdk-8",
+                "LANG=C.UTF-8",
+                "JAVA_VERSION=8u342",
+                "KARAF_VERSION=4.0.10",
+                "KARAF_HOME=/opt/karaf"
+            ],
+            "Cmd": [
+                "karaf"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 694012752,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/86839aabc358af34bdb19be8664538a46b87125d85aea653a56a2ad239114850/diff:/var/lib/docker/overlay2/cc2f9b6021759189f15067e97d5ce319ff93bd3ec07d0b073a56189cdd95e0f6/diff:/var/lib/docker/overlay2/bea69b23ecb67af66974aeccec0c9ff2836b8cdddceec54726f2156833cb567b/diff:/var/lib/docker/overlay2/4fc8692497918f6f3ebff027cda335a6b561d1e1970b34ac47759989d90186d9/diff:/var/lib/docker/overlay2/2ee3a231498d5ef2467b894f50bc20e8a2549b1c2168ead57066d55160184f92/diff:/var/lib/docker/overlay2/7f7472a652cedbe3f86177befa609c5bd10092d02296d3c46f22c18fb2eb6b23/diff:/var/lib/docker/overlay2/d3a50bd5a3fb96193916412f63f4bd5d5a1e7c5d6b099013ddf3c2e5db3cd4fa/diff:/var/lib/docker/overlay2/b23c8d359a607d5b951cd5cbe76188206a1aa57b40ffc711f03b8b78958b899d/diff",
+                "MergedDir": "/var/lib/docker/overlay2/274b37617f71ac76e16c9eb73af942e1e0f527672f647083d1b63a91ad40db50/merged",
+                "UpperDir": "/var/lib/docker/overlay2/274b37617f71ac76e16c9eb73af942e1e0f527672f647083d1b63a91ad40db50/diff",
+                "WorkDir": "/var/lib/docker/overlay2/274b37617f71ac76e16c9eb73af942e1e0f527672f647083d1b63a91ad40db50/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:92a4e8a3140f7a04a0e5a15793adef2d0e8889ed306a8f95a6cfb67cecb5f212",
+                "sha256:eafe6e032dbd1979848a323c4c84071be765d175661d6ea2ac148dbd673c6713",
+                "sha256:cd5a0a9f1e018d0861ca738588413c2906a36f5b5ae87906e8718961e44c3a7f",
+                "sha256:b66078cf4b4146848eb677f38d6fa83559b6c92d010d5cff63759bedd87e318e",
+                "sha256:ab1f22745be5bfa5b523e130e8acd9cfb9cf90f52e7dcec5991fbb9241e532b8",
+                "sha256:19501a1817382cf078eb1769fc97ec017222b8a9366c47d75204c9ea50106e68",
+                "sha256:6e1af3ffb1b6fd82c6d829c21a7f7f63c2309f0fa914d5ce89ed63aff8f4f3ee",
+                "sha256:a39cdce74ec986f9d9c38bf34c2d558d08fcde3355f321177e0c076c00d5e6a5",
+                "sha256:f8ccdb3cecfa212c6633961c03c08fad1f7c39f72d6466949d79fc03bee11fbe"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:15:37.173977904Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: dockerdev.cekino.com/auth_frontend:2.5.3.14. İşleme devam ediliyor...
+Etiketleniyor: dockerdev.cekino.com/auth_frontend:2.5.3.14 -> nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/auth_frontend:2.5.3.14
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/auth_frontend:2.5.3.14
+Docker Inspect Çıktısı (dockerdev.cekino.com/auth_frontend:2.5.3.14):
+[
+    {
+        "Id": "sha256:493e6375809e4eb638d44f984437c78c52bcd2a000500a59e6a692d725e5ab9b",
+        "RepoTags": [
+            "dockerdev.cekino.com/auth_frontend:2.5.3.14",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/auth_frontend:2.5.3.14"
+        ],
+        "RepoDigests": [
+            "dockerdev.cekino.com/auth_frontend@sha256:b103c1dc8dd209d84f6a8e5a8f9ede5456200dee4225de615caa685f1fe55dbe",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/auth_frontend@sha256:b103c1dc8dd209d84f6a8e5a8f9ede5456200dee4225de615caa685f1fe55dbe"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-11-29T12:11:00.112045141Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.27.3",
+                "PKG_RELEASE=1",
+                "DYNPKG_RELEASE=1",
+                "NJS_VERSION=0.8.7",
+                "NJS_RELEASE=1"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "/docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGQUIT"
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 63007305,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/ef7a2e86b627a3c1173b79bea301efa08b4ef7bc40aef914c15ce832bb528d6f/diff:/var/lib/docker/overlay2/49438f7df189c54bcc68d285968fb7cf669aa8cec49938f5c24d7a4c1ca9743b/diff:/var/lib/docker/overlay2/d5491eb81ca210cc497b2991678559fe7342b281ae02cc666b32285282c827b8/diff:/var/lib/docker/overlay2/92051dd5951584e72407259fefa12f68b890222a4a9e0b8c105f80771dbc78d8/diff:/var/lib/docker/overlay2/2772d61dd2a898ea09d2221c819dce83b6da69ae8c576c17075525b56fceb0e8/diff:/var/lib/docker/overlay2/e7a0f2b9cacd353d6a60124954f09c7cd836e45baa8f44e635d6b2e4e8c0180a/diff:/var/lib/docker/overlay2/1be098ce6079232f65f1b04ef5519a3ae5a2457b13ef4b9a3980bdc46f9337d2/diff:/var/lib/docker/overlay2/ce490290ba832fb1a54289997e504a8a76c0bd41d8105dbc9178a1b23188d547/diff:/var/lib/docker/overlay2/19445d3448dac19b598dce3cdd54990e75bff56a6fe6d850171509affb0b50c1/diff",
+                "MergedDir": "/var/lib/docker/overlay2/7d9cfa68f22243302c9b2556656002192727a2ffbe2c07781d93929dc75bc173/merged",
+                "UpperDir": "/var/lib/docker/overlay2/7d9cfa68f22243302c9b2556656002192727a2ffbe2c07781d93929dc75bc173/diff",
+                "WorkDir": "/var/lib/docker/overlay2/7d9cfa68f22243302c9b2556656002192727a2ffbe2c07781d93929dc75bc173/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:75654b8eeebd3beae97271a102f57cdeb794cc91e442648544963a7e951e9558",
+                "sha256:287563f25f8bfa90df7062d523d3c2916ad6460b349965c3779c6e7a787fb1b1",
+                "sha256:4e8a0009474a96e9dd15013f5d9087ddbc4b9018db394731c2f32aa908cc1944",
+                "sha256:4a37d1b499116af814d343c444276eae151355fd83d59f65baedb7ffb24a6110",
+                "sha256:884b72c14f15c081daa2f33405c51bc3eb8300e4d54c46055be09fc8e7ed0da2",
+                "sha256:8b5ce426f73df0c5b086e044892d011c4b9738cee7cba45514a67a01294ff2c2",
+                "sha256:b11b581625043e7a2fac1046ee9b2b4c7dc7da71a22d6d247b86b41c3dbdf02d",
+                "sha256:2430c01bea641132d281d0a580e095cd85f1a61c6cf5a51c073fa827f6a92d9b",
+                "sha256:b45b71735d839ddd1b70dacddc21ca9d960e39f0d383df9a07363d7967cd8fda",
+                "sha256:39ffa59951e2e18115013b065e9d92fdd3193849f12582a1be706a8a3097685d"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:16:09.792237992Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: dockerdev.cekino.com/admin_frontend:2.5.3.10. İşleme devam ediliyor...
+Etiketleniyor: dockerdev.cekino.com/admin_frontend:2.5.3.10 -> nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/admin_frontend:2.5.3.10
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/admin_frontend:2.5.3.10
+Docker Inspect Çıktısı (dockerdev.cekino.com/admin_frontend:2.5.3.10):
+[
+    {
+        "Id": "sha256:b5d94cc203eede6066f4247a99c20b291aa5b81f1a032c8945907df266e383e1",
+        "RepoTags": [
+            "dockerdev.cekino.com/admin_frontend:2.5.3.10",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/admin_frontend:2.5.3.10"
+        ],
+        "RepoDigests": [
+            "dockerdev.cekino.com/admin_frontend@sha256:6a99eb5ca1284bcdc68066446f082987224e2d792565d729994718bcbf04f555",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/admin_frontend@sha256:6a99eb5ca1284bcdc68066446f082987224e2d792565d729994718bcbf04f555"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-11-27T07:31:47.015623558Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.27.3",
+                "PKG_RELEASE=1",
+                "DYNPKG_RELEASE=1",
+                "NJS_VERSION=0.8.7",
+                "NJS_RELEASE=1"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "/docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGQUIT"
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 123826244,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/4a2c69dd3820cb7894c25bf89519affd1426866b04ca6cb4dc93475d91041537/diff:/var/lib/docker/overlay2/49438f7df189c54bcc68d285968fb7cf669aa8cec49938f5c24d7a4c1ca9743b/diff:/var/lib/docker/overlay2/d5491eb81ca210cc497b2991678559fe7342b281ae02cc666b32285282c827b8/diff:/var/lib/docker/overlay2/92051dd5951584e72407259fefa12f68b890222a4a9e0b8c105f80771dbc78d8/diff:/var/lib/docker/overlay2/2772d61dd2a898ea09d2221c819dce83b6da69ae8c576c17075525b56fceb0e8/diff:/var/lib/docker/overlay2/e7a0f2b9cacd353d6a60124954f09c7cd836e45baa8f44e635d6b2e4e8c0180a/diff:/var/lib/docker/overlay2/1be098ce6079232f65f1b04ef5519a3ae5a2457b13ef4b9a3980bdc46f9337d2/diff:/var/lib/docker/overlay2/ce490290ba832fb1a54289997e504a8a76c0bd41d8105dbc9178a1b23188d547/diff:/var/lib/docker/overlay2/19445d3448dac19b598dce3cdd54990e75bff56a6fe6d850171509affb0b50c1/diff",
+                "MergedDir": "/var/lib/docker/overlay2/a70fe7edd4fbc2387d3ce0d37a4686fdfa7073d1d504f15c41efff7a95a94476/merged",
+                "UpperDir": "/var/lib/docker/overlay2/a70fe7edd4fbc2387d3ce0d37a4686fdfa7073d1d504f15c41efff7a95a94476/diff",
+                "WorkDir": "/var/lib/docker/overlay2/a70fe7edd4fbc2387d3ce0d37a4686fdfa7073d1d504f15c41efff7a95a94476/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:75654b8eeebd3beae97271a102f57cdeb794cc91e442648544963a7e951e9558",
+                "sha256:287563f25f8bfa90df7062d523d3c2916ad6460b349965c3779c6e7a787fb1b1",
+                "sha256:4e8a0009474a96e9dd15013f5d9087ddbc4b9018db394731c2f32aa908cc1944",
+                "sha256:4a37d1b499116af814d343c444276eae151355fd83d59f65baedb7ffb24a6110",
+                "sha256:884b72c14f15c081daa2f33405c51bc3eb8300e4d54c46055be09fc8e7ed0da2",
+                "sha256:8b5ce426f73df0c5b086e044892d011c4b9738cee7cba45514a67a01294ff2c2",
+                "sha256:b11b581625043e7a2fac1046ee9b2b4c7dc7da71a22d6d247b86b41c3dbdf02d",
+                "sha256:2430c01bea641132d281d0a580e095cd85f1a61c6cf5a51c073fa827f6a92d9b",
+                "sha256:c61dec41a1ee2247203a6c0755f85bfdc9b0d3ef56fe50b6ea8c58c7fc78b650",
+                "sha256:22f83df04b605086558fdf4bc12220b08755cf9b63e2bc3605fba5f0554f8f54"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:16:23.14385948Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: dockerdev.cekino.com/client_frontend:2.5.3.7. İşleme devam ediliyor...
+Etiketleniyor: dockerdev.cekino.com/client_frontend:2.5.3.7 -> nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/client_frontend:2.5.3.7
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/client_frontend:2.5.3.7
+Docker Inspect Çıktısı (dockerdev.cekino.com/client_frontend:2.5.3.7):
+[
+    {
+        "Id": "sha256:302dc42dd0bc0f041d254e101edc6380c91f7288c915d66ce10f93783608b442",
+        "RepoTags": [
+            "dockerdev.cekino.com/client_frontend:2.5.3.7",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/client_frontend:2.5.3.7"
+        ],
+        "RepoDigests": [
+            "dockerdev.cekino.com/client_frontend@sha256:aad5acf67a8941c402b8e3b48377b77f9e19697478d30fc001f55c63ea82a9fa",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/client_frontend@sha256:aad5acf67a8941c402b8e3b48377b77f9e19697478d30fc001f55c63ea82a9fa"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-11-27T07:03:03.617427259Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.27.3",
+                "PKG_RELEASE=1",
+                "DYNPKG_RELEASE=1",
+                "NJS_VERSION=0.8.7",
+                "NJS_RELEASE=1"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "/docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGQUIT"
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 170938073,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/ff9277989364093d81697669475837b98cb939c4905a0ccef600263415469fa2/diff:/var/lib/docker/overlay2/49438f7df189c54bcc68d285968fb7cf669aa8cec49938f5c24d7a4c1ca9743b/diff:/var/lib/docker/overlay2/d5491eb81ca210cc497b2991678559fe7342b281ae02cc666b32285282c827b8/diff:/var/lib/docker/overlay2/92051dd5951584e72407259fefa12f68b890222a4a9e0b8c105f80771dbc78d8/diff:/var/lib/docker/overlay2/2772d61dd2a898ea09d2221c819dce83b6da69ae8c576c17075525b56fceb0e8/diff:/var/lib/docker/overlay2/e7a0f2b9cacd353d6a60124954f09c7cd836e45baa8f44e635d6b2e4e8c0180a/diff:/var/lib/docker/overlay2/1be098ce6079232f65f1b04ef5519a3ae5a2457b13ef4b9a3980bdc46f9337d2/diff:/var/lib/docker/overlay2/ce490290ba832fb1a54289997e504a8a76c0bd41d8105dbc9178a1b23188d547/diff:/var/lib/docker/overlay2/19445d3448dac19b598dce3cdd54990e75bff56a6fe6d850171509affb0b50c1/diff",
+                "MergedDir": "/var/lib/docker/overlay2/7cdfb22312a231d2ff25cdc68d07e263526834c9778ce56aa10f9771f77b18bd/merged",
+                "UpperDir": "/var/lib/docker/overlay2/7cdfb22312a231d2ff25cdc68d07e263526834c9778ce56aa10f9771f77b18bd/diff",
+                "WorkDir": "/var/lib/docker/overlay2/7cdfb22312a231d2ff25cdc68d07e263526834c9778ce56aa10f9771f77b18bd/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:75654b8eeebd3beae97271a102f57cdeb794cc91e442648544963a7e951e9558",
+                "sha256:287563f25f8bfa90df7062d523d3c2916ad6460b349965c3779c6e7a787fb1b1",
+                "sha256:4e8a0009474a96e9dd15013f5d9087ddbc4b9018db394731c2f32aa908cc1944",
+                "sha256:4a37d1b499116af814d343c444276eae151355fd83d59f65baedb7ffb24a6110",
+                "sha256:884b72c14f15c081daa2f33405c51bc3eb8300e4d54c46055be09fc8e7ed0da2",
+                "sha256:8b5ce426f73df0c5b086e044892d011c4b9738cee7cba45514a67a01294ff2c2",
+                "sha256:b11b581625043e7a2fac1046ee9b2b4c7dc7da71a22d6d247b86b41c3dbdf02d",
+                "sha256:2430c01bea641132d281d0a580e095cd85f1a61c6cf5a51c073fa827f6a92d9b",
+                "sha256:99b90be3fa641a359fc38003dea1fa9b0ab04b4160b3970178d22243935a11bf",
+                "sha256:922c6bba1bf490c6abfb2709b277fb31d9b25e44a375e39589546beb67e6d34b"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:16:39.273347898Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Etiketleniyor: nginx:<none> -> nexus.cekino.local:5000/nexus.cekino.local/nginx:<none>
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/nginx:<none>
+Docker Inspect Çıktısı (nginx:<none>):
+[]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: dockerdev.cekino.com/mdm_frontend:2.5.3.49. İşleme devam ediliyor...
+Etiketleniyor: dockerdev.cekino.com/mdm_frontend:2.5.3.49 -> nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/mdm_frontend:2.5.3.49
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/mdm_frontend:2.5.3.49
+Docker Inspect Çıktısı (dockerdev.cekino.com/mdm_frontend:2.5.3.49):
+[
+    {
+        "Id": "sha256:80c63b57f706678a075428055084214f4c91d1ff8301841db0d2cf7b0bd3c544",
+        "RepoTags": [
+            "dockerdev.cekino.com/mdm_frontend:2.5.3.49",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/mdm_frontend:2.5.3.49"
+        ],
+        "RepoDigests": [
+            "dockerdev.cekino.com/mdm_frontend@sha256:87763ee40d4550062a8a41ed4c66ac0a510ca3cdd0f8c9b2bb30ef594ee14331",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/mdm_frontend@sha256:87763ee40d4550062a8a41ed4c66ac0a510ca3cdd0f8c9b2bb30ef594ee14331"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-11-26T14:34:07.673949222Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "80/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "NGINX_VERSION=1.27.2",
+                "PKG_RELEASE=1",
+                "DYNPKG_RELEASE=1",
+                "NJS_VERSION=0.8.6",
+                "NJS_RELEASE=1"
+            ],
+            "Cmd": [
+                "nginx",
+                "-g",
+                "daemon off;"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "/docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "maintainer": "NGINX Docker Maintainers <docker-maint@nginx.com>"
+            },
+            "StopSignal": "SIGQUIT"
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 75693937,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/0ac86f6dfee4c9b00c1864389f1fae9118b4c9ae49df5f153fc5dd9574330619/diff:/var/lib/docker/overlay2/0f73eaccf13abcdae33be4f406376f765e7213310f2e8298a06a9e43b813f575/diff:/var/lib/docker/overlay2/3b3b05a4ad1f918c00d1148e2808387ce2aa60c8c1617e7d0f0a6ff376dd47e4/diff:/var/lib/docker/overlay2/192b59fad874b346e611513806348db834ee1761fc4ff6d31fc7d3f3994f6eb8/diff:/var/lib/docker/overlay2/d27524c3c91f3bd2b3bf3253c6f4223a5aab2de1ff91af837fb66b02a2b08e4b/diff:/var/lib/docker/overlay2/9605d4a59e8bd2c8589cc4ff16558896bb5cac7e29c589543624c8fa9ee1c6e0/diff:/var/lib/docker/overlay2/61bf9404d46343e0e61d69261086b5c310d252d9dae9ab45b70503ee341656cc/diff:/var/lib/docker/overlay2/6aacb803987ddf42a3741a1c41612f41c899414318427932ff3bd2d870166c80/diff:/var/lib/docker/overlay2/19445d3448dac19b598dce3cdd54990e75bff56a6fe6d850171509affb0b50c1/diff",
+                "MergedDir": "/var/lib/docker/overlay2/88817869ce0420a09c2fd1a9ae12c424bfe51cec29167465264a62f7e8136d46/merged",
+                "UpperDir": "/var/lib/docker/overlay2/88817869ce0420a09c2fd1a9ae12c424bfe51cec29167465264a62f7e8136d46/diff",
+                "WorkDir": "/var/lib/docker/overlay2/88817869ce0420a09c2fd1a9ae12c424bfe51cec29167465264a62f7e8136d46/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:75654b8eeebd3beae97271a102f57cdeb794cc91e442648544963a7e951e9558",
+                "sha256:df75bb36e265a5515e9d56559c253f3ad8ac65f67b120ac17dc5d39e3650c1f9",
+                "sha256:ffe4285e29068b1a6112d99b633535058b91344bb1eac41cbec3c319c908cc43",
+                "sha256:3ca5de8f08eb9b673db2fd9c591abd69b1caa3d98ac0ebe383b4701a3ac75f8b",
+                "sha256:19d3bde9037c77ff30ef945e663bbcfffcbca10e80b79f46c916ae0da7e60a07",
+                "sha256:8d94d71d4b48c71f9a76bca8dcdf9b752dd604a0276b2047d6c8f748229cbb4d",
+                "sha256:1ce97418c44e80dc0051e16deb9966ee8a1579bbbbef9f19ef2a33a45648d6e3",
+                "sha256:b67a2e28b4c8ca1857c558050b6d525c5946ffbeeec03c383e7a6bad37c6cd4c",
+                "sha256:8cfa8b1dd41109ef3c1c7533557a25abba3dcfb901d3ce604f9674e65b084928",
+                "sha256:e22194aa0c50480f9d708598f0a4e4da23a42fae2ec47d784474d10f006435de"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:17:09.076441948Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: dockerdev.cekino.com/log_center:2.5.3.5. İşleme devam ediliyor...
+Etiketleniyor: dockerdev.cekino.com/log_center:2.5.3.5 -> nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/log_center:2.5.3.5
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/log_center:2.5.3.5
+Docker Inspect Çıktısı (dockerdev.cekino.com/log_center:2.5.3.5):
+[
+    {
+        "Id": "sha256:bfb7d80248c16b1a9b96706cbc6b1dd0d5a98e5b18b1ccde3b314ab63e4a82e9",
+        "RepoTags": [
+            "dockerdev.cekino.com/log_center:2.5.3.5",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/log_center:2.5.3.5"
+        ],
+        "RepoDigests": [
+            "dockerdev.cekino.com/log_center@sha256:21a4d8b15cfb594164810831a5301726eba962282906f4a5ab67a7fc27471a50",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/log_center@sha256:21a4d8b15cfb594164810831a5301726eba962282906f4a5ab67a7fc27471a50"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-11-25T14:30:36.285424835Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "1099/tcp": {},
+                "44444/tcp": {},
+                "5224/tcp": {},
+                "8101/tcp": {},
+                "8181/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/opt/karaf/bin:/usr/local/openjdk-8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "JAVA_HOME=/usr/local/openjdk-8",
+                "LANG=C.UTF-8",
+                "JAVA_VERSION=8u342",
+                "KARAF_VERSION=4.0.10",
+                "KARAF_HOME=/opt/karaf"
+            ],
+            "Cmd": [
+                "karaf"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 546099241,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/46f1b914b3ed980fe55215ac2114d3290e9d9b8a3383b74ce7b509655b191bc6/diff:/var/lib/docker/overlay2/d40068ca0413dc9b1f34c7ced3a84082ba8be16a3310903d549607e6bd04d3d6/diff:/var/lib/docker/overlay2/9732e3355649b97f61e60ab8272bc9f00adfcd6c26b69358b46073b066eac45a/diff:/var/lib/docker/overlay2/2ee3a231498d5ef2467b894f50bc20e8a2549b1c2168ead57066d55160184f92/diff:/var/lib/docker/overlay2/7f7472a652cedbe3f86177befa609c5bd10092d02296d3c46f22c18fb2eb6b23/diff:/var/lib/docker/overlay2/d3a50bd5a3fb96193916412f63f4bd5d5a1e7c5d6b099013ddf3c2e5db3cd4fa/diff:/var/lib/docker/overlay2/b23c8d359a607d5b951cd5cbe76188206a1aa57b40ffc711f03b8b78958b899d/diff",
+                "MergedDir": "/var/lib/docker/overlay2/ecb2c9f7e60df521702ca35409f0b20845778d0c10ed0e581675d3ed037de9ba/merged",
+                "UpperDir": "/var/lib/docker/overlay2/ecb2c9f7e60df521702ca35409f0b20845778d0c10ed0e581675d3ed037de9ba/diff",
+                "WorkDir": "/var/lib/docker/overlay2/ecb2c9f7e60df521702ca35409f0b20845778d0c10ed0e581675d3ed037de9ba/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:92a4e8a3140f7a04a0e5a15793adef2d0e8889ed306a8f95a6cfb67cecb5f212",
+                "sha256:eafe6e032dbd1979848a323c4c84071be765d175661d6ea2ac148dbd673c6713",
+                "sha256:cd5a0a9f1e018d0861ca738588413c2906a36f5b5ae87906e8718961e44c3a7f",
+                "sha256:b66078cf4b4146848eb677f38d6fa83559b6c92d010d5cff63759bedd87e318e",
+                "sha256:f34d8e04f8939f9fe95f8ea3acd94328d8c6d83cfda672c004b2f017f5123e95",
+                "sha256:46d03d689b79166020841f85ff1018df7d059c40a3a0481bdc241741413cead2",
+                "sha256:113d5c1f9bd79a160016c67fc9ffdc1a22ee79cd14ab33e4d764e254fbad17e0",
+                "sha256:02ceb7a01c2dc6d12713f6c51650ad14afb329b12f385fbdb095d56de627fa3f"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:17:22.050799001Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: dockerdev.cekino.com/auth:2.5.3.3. İşleme devam ediliyor...
+Etiketleniyor: dockerdev.cekino.com/auth:2.5.3.3 -> nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/auth:2.5.3.3
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/auth:2.5.3.3
+Docker Inspect Çıktısı (dockerdev.cekino.com/auth:2.5.3.3):
+[
+    {
+        "Id": "sha256:84a5c0c0e02e8a54cfe19cb63700682604faadf21684c467e043211cf8f0fbc4",
+        "RepoTags": [
+            "dockerdev.cekino.com/auth:2.5.3.3",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/auth:2.5.3.3"
+        ],
+        "RepoDigests": [
+            "dockerdev.cekino.com/auth@sha256:4d26a40e26a5c8e0beae2d8d0d44fc94a950a5058e33cf1ee9ac1494527f9593",
+            "nexus.cekino.local:5000/nexus.cekino.local/dockerdev.cekino.com/auth@sha256:4d26a40e26a5c8e0beae2d8d0d44fc94a950a5058e33cf1ee9ac1494527f9593"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-11-22T14:52:56.066381622Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "1099/tcp": {},
+                "44444/tcp": {},
+                "8101/tcp": {},
+                "8181/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/opt/karaf/bin:/usr/local/openjdk-8/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "JAVA_HOME=/usr/local/openjdk-8",
+                "LANG=C.UTF-8",
+                "JAVA_VERSION=8u342",
+                "KARAF_VERSION=4.0.10",
+                "KARAF_HOME=/opt/karaf"
+            ],
+            "Cmd": [
+                "karaf"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 649081137,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/60c12b0626fd6fb55f973a4f06d24da2ae0f052ee4783a3c5dcd1d4d95ea4561/diff:/var/lib/docker/overlay2/48ed49181b53bf178232f0aaa5bab7b2be613449b61c40baae11df87c5b58b30/diff:/var/lib/docker/overlay2/c3e4358d464090bc52a6e01aa634824f368b3c351e34e0ce1fa85a971660c808/diff:/var/lib/docker/overlay2/2ee3a231498d5ef2467b894f50bc20e8a2549b1c2168ead57066d55160184f92/diff:/var/lib/docker/overlay2/7f7472a652cedbe3f86177befa609c5bd10092d02296d3c46f22c18fb2eb6b23/diff:/var/lib/docker/overlay2/d3a50bd5a3fb96193916412f63f4bd5d5a1e7c5d6b099013ddf3c2e5db3cd4fa/diff:/var/lib/docker/overlay2/b23c8d359a607d5b951cd5cbe76188206a1aa57b40ffc711f03b8b78958b899d/diff",
+                "MergedDir": "/var/lib/docker/overlay2/462f00a792ad08e84a25d4d88bed36021d8d3a281a5c7dd39a532af28ef75c4e/merged",
+                "UpperDir": "/var/lib/docker/overlay2/462f00a792ad08e84a25d4d88bed36021d8d3a281a5c7dd39a532af28ef75c4e/diff",
+                "WorkDir": "/var/lib/docker/overlay2/462f00a792ad08e84a25d4d88bed36021d8d3a281a5c7dd39a532af28ef75c4e/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:92a4e8a3140f7a04a0e5a15793adef2d0e8889ed306a8f95a6cfb67cecb5f212",
+                "sha256:eafe6e032dbd1979848a323c4c84071be765d175661d6ea2ac148dbd673c6713",
+                "sha256:cd5a0a9f1e018d0861ca738588413c2906a36f5b5ae87906e8718961e44c3a7f",
+                "sha256:b66078cf4b4146848eb677f38d6fa83559b6c92d010d5cff63759bedd87e318e",
+                "sha256:1c1018480dae7beb53030783de4eb7fcbb9351fffae02d81b37e0efd70bbee57",
+                "sha256:51a0d4c77afa89c8de48f33556d83e14a544b56f243768e36d7535455845eb32",
+                "sha256:814a8c6d32f82426ded3fd52da96b080e3e5a4d74fb3e9de1e0b6169ecfc18e3",
+                "sha256:32992c238076520270c28eda3f8d0fb8e94439e15a009afe6f317bf2f579bd58"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:17:41.582285375Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: postgres:13. İşleme devam ediliyor...
+Etiketleniyor: postgres:13 -> nexus.cekino.local:5000/nexus.cekino.local/postgres:13
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/postgres:13
+Docker Inspect Çıktısı (postgres:13):
+[
+    {
+        "Id": "sha256:f60833e1219deb3762254ecfd1aefd95d99996c0ef5719ff458d5edc9e429546",
+        "RepoTags": [
+            "postgres:13",
+            "nexus.cekino.local:5000/nexus.cekino.local/postgres:13"
+        ],
+        "RepoDigests": [
+            "postgres@sha256:13ae5ab08d8400b3002da7495978381b83ad094c24f54d7cd7ddebefc5ac9e64",
+            "nexus.cekino.local:5000/nexus.cekino.local/postgres@sha256:d7a2df032e73514ae03ee50bde77ee7c132a14c946d065e9ea2541a971df99d3"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-11-21T20:07:48Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "5432/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/lib/postgresql/13/bin",
+                "GOSU_VERSION=1.17",
+                "LANG=en_US.utf8",
+                "PG_MAJOR=13",
+                "PG_VERSION=13.18-1.pgdg120+1",
+                "PGDATA=/var/lib/postgresql/data"
+            ],
+            "Cmd": [
+                "postgres"
+            ],
+            "Image": "",
+            "Volumes": {
+                "/var/lib/postgresql/data": {}
+            },
+            "WorkingDir": "",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": null,
+            "StopSignal": "SIGINT"
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 419498777,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/f3328446dd94620fc262d98cb6c7861c8cd233cca3ddf4e9c55d5c4d67e4bb94/diff:/var/lib/docker/overlay2/a848ca1b3f0425cf12b9f5aa71b0bda647d70a68fa137aeae418cee629790cd6/diff:/var/lib/docker/overlay2/ae8a2a1830f747f7a7e8eddee6843aa10b8c8ef8723e521820164193e840f7e1/diff:/var/lib/docker/overlay2/0f920223f54d43f07a805445a30927a7ab8ae7778a633858aea111699eee87c8/diff:/var/lib/docker/overlay2/7cb9029d76bb9ee673f39c045fc51fb72d82932d9c11a9bd0f1014f30ab0d55b/diff:/var/lib/docker/overlay2/17c2ba233dd18b578120641a50a6eacb2f0c53bdeb1dede4abb3d9af9cab0068/diff:/var/lib/docker/overlay2/bf143419f39dbbf75c0db11b647d1433050eab8f107b6b15fef427f2757c93db/diff:/var/lib/docker/overlay2/d64800035a50206c25739cf5233a2436583e9b44ed025f7ac08a064417a92a8f/diff:/var/lib/docker/overlay2/19eb63d82506d727b94c218d00f3ce17fd4d286d601d66722908123e2bc262c7/diff:/var/lib/docker/overlay2/e4367bbd630475e435857ce1c31e8fb92af0343bb3d00c9d7cd1d0e87c892a0b/diff:/var/lib/docker/overlay2/35b7ebc1d18faa5bafe8a8a6a01637abc927ebebfeabfd0e9e77733a02866b4d/diff:/var/lib/docker/overlay2/7a913a874e51d7671a00333e49beb25f73527fcfa483352adb3b5867d595fc86/diff:/var/lib/docker/overlay2/3d324f35071398b3afed454b55861f6331977ad0109f36d06c9093b0114b2f74/diff",
+                "MergedDir": "/var/lib/docker/overlay2/3c871674d2fac8c3b56cf3c2e8abd23f5500efe774220e6d116aad8f3bb5fe08/merged",
+                "UpperDir": "/var/lib/docker/overlay2/3c871674d2fac8c3b56cf3c2e8abd23f5500efe774220e6d116aad8f3bb5fe08/diff",
+                "WorkDir": "/var/lib/docker/overlay2/3c871674d2fac8c3b56cf3c2e8abd23f5500efe774220e6d116aad8f3bb5fe08/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:c0f1022b22a9b36851b358f44e5475e39d166e71a8073cf53c894a299239b1c5",
+                "sha256:7cde675e26c5319b78690fddd1c411d0559c15de8ee490e8e1f232b7395714e6",
+                "sha256:6e7407d40b8442e2eae21b8fe1c03473d3586d50b3d898c4144feaba7ed97ddd",
+                "sha256:94c5ae7b9483a7598975b5ded50ae6302ab10c5795e27e1604131a978e96de92",
+                "sha256:c29144f4007b5cce09f582f5b1cd2d9b8142705d11534ff3cadfd74900fe59ce",
+                "sha256:d0018d6f830b8da3722761a713f57e2a3bed37f892ed0266557e8b894ed4f0cf",
+                "sha256:b095c1543fe8763bdea910169de2e7f5a896cc6dc0ff9783f6f9262d585cc303",
+                "sha256:2a63632f9dc976e113153627965a6cfdb847d5e7e6ec89e9701f439265abf85d",
+                "sha256:2f869c1a47fd60ed7c4584a49234bcc529e691b1b4f1bb1dae08b37cb65ecd0c",
+                "sha256:67fc6c1411abeb26c276553e91619dae97aa81115220d6df6cabe188b9cd236a",
+                "sha256:2df3b8b4b376a0fb2261bc319f884fb9d5838a140b5fef1b4c924984ae0e6fac",
+                "sha256:6cf9401b126c609abf7d3c24a06b1a727c27968c39ecda36ae30be858aff9e7d",
+                "sha256:28544b73cbdc2723ea3fdb9244c1c195686ca6ee94fe888f290f2f1cb95da8ee",
+                "sha256:062f4a48690743345407c8731e171813c354e5ca046d35d2c767003440f52ad7"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:18:05.253202551Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: sp9989/openfire:latest. İşleme devam ediliyor...
+Etiketleniyor: sp9989/openfire:latest -> nexus.cekino.local:5000/nexus.cekino.local/sp9989/openfire:latest
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/sp9989/openfire:latest
+Docker Inspect Çıktısı (sp9989/openfire:latest):
+[
+    {
+        "Id": "sha256:1ed0eb08eaac33a3af2d2dea6ab0faf0fa615d77f783a5744ddd747d77916841",
+        "RepoTags": [
+            "sp9989/openfire:latest",
+            "nexus.cekino.local:5000/nexus.cekino.local/sp9989/openfire:latest"
+        ],
+        "RepoDigests": [
+            "sp9989/openfire@sha256:725055bec3a923afde8e1cc10c0698fc46f71b0c8aa721cf71407fd23540b9b0",
+            "nexus.cekino.local:5000/nexus.cekino.local/sp9989/openfire@sha256:725055bec3a923afde8e1cc10c0698fc46f71b0c8aa721cf71407fd23540b9b0"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-11-20T21:27:44.794549157Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "3478/tcp": {},
+                "3479/tcp": {},
+                "5222/tcp": {},
+                "5269/tcp": {},
+                "5275/tcp": {},
+                "9090/tcp": {},
+                "9091/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/openjdk-11/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "JAVA_HOME=/usr/local/openjdk-11",
+                "LANG=C.UTF-8",
+                "JAVA_VERSION=11.0.16",
+                "OPENFIRE_VERSION=4.7.5",
+                "OPENFIRE_URL=https://www.igniterealtime.org/downloadServlet?filename=openfire/openfire_4_9_2.tar.gz"
+            ],
+            "Cmd": [
+                "bin/openfire.sh"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": {
+                "/opt/openfire/conf": {},
+                "/opt/openfire/logs": {},
+                "/opt/openfire/plugins": {}
+            },
+            "WorkingDir": "/opt/openfire",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 287293687,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/e57130fce2d60c70e4ab3949ea30f1fa210301331c554ed0376b478953844045/diff:/var/lib/docker/overlay2/9612cb13c2bc730b051c27d8270c55e3d58c725a75e24a7d94bbf7325992f4f1/diff:/var/lib/docker/overlay2/d07c116f742faea2d479eee4395caa6c1824644a7c4b1427d3ea2b2a00a8621d/diff:/var/lib/docker/overlay2/d3a50bd5a3fb96193916412f63f4bd5d5a1e7c5d6b099013ddf3c2e5db3cd4fa/diff:/var/lib/docker/overlay2/b23c8d359a607d5b951cd5cbe76188206a1aa57b40ffc711f03b8b78958b899d/diff",
+                "MergedDir": "/var/lib/docker/overlay2/ffdf1be8968c3eb2c3bbeea9b5cb1ced88ecd17cc78c04b89d7eb0d1d5ae4a9c/merged",
+                "UpperDir": "/var/lib/docker/overlay2/ffdf1be8968c3eb2c3bbeea9b5cb1ced88ecd17cc78c04b89d7eb0d1d5ae4a9c/diff",
+                "WorkDir": "/var/lib/docker/overlay2/ffdf1be8968c3eb2c3bbeea9b5cb1ced88ecd17cc78c04b89d7eb0d1d5ae4a9c/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:92a4e8a3140f7a04a0e5a15793adef2d0e8889ed306a8f95a6cfb67cecb5f212",
+                "sha256:eafe6e032dbd1979848a323c4c84071be765d175661d6ea2ac148dbd673c6713",
+                "sha256:e3abdc2e92525469b91b8616216f3ab94b40c98f99e9690fd8505725fd7e1bfe",
+                "sha256:d7802b8508afcba9f87b128ab24e5e2706476a94b1d9610602fda64bf273a845",
+                "sha256:4d8f886b8d550d32e8e04094f6136798b9a19a6d05a3cec52c990e2e8074f558",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:18:38.364137468Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: mongo:latest. İşleme devam ediliyor...
+Etiketleniyor: mongo:latest -> nexus.cekino.local:5000/nexus.cekino.local/mongo:latest
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/mongo:latest
+Docker Inspect Çıktısı (mongo:latest):
+[
+    {
+        "Id": "sha256:35c09d23ad5d9004353bfb846e1fe884ffd5907a4e5d805e9605e73b1c2e2b09",
+        "RepoTags": [
+            "mongo:latest",
+            "nexus.cekino.local:5000/nexus.cekino.local/mongo:latest"
+        ],
+        "RepoDigests": [
+            "mongo@sha256:8565ecda5b221016d70f7745ac1ba0b97ccb05836157f8a343e987338fdc8350",
+            "nexus.cekino.local:5000/nexus.cekino.local/mongo@sha256:25e945798214197ac78128661a1b1fab4f4f28b27ede00dd97621cae95727bba"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-10-25T04:15:38Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "27017/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "GOSU_VERSION=1.17",
+                "JSYAML_VERSION=3.13.1",
+                "JSYAML_CHECKSUM=662e32319bdd378e91f67578e56a34954b0a2e33aca11d70ab9f4826af24b941",
+                "MONGO_PACKAGE=mongodb-org",
+                "MONGO_REPO=repo.mongodb.org",
+                "MONGO_MAJOR=8.0",
+                "MONGO_VERSION=8.0.3",
+                "HOME=/data/db"
+            ],
+            "Cmd": [
+                "mongod"
+            ],
+            "Image": "",
+            "Volumes": {
+                "/data/configdb": {},
+                "/data/db": {}
+            },
+            "WorkingDir": "",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": {
+                "org.opencontainers.image.ref.name": "ubuntu",
+                "org.opencontainers.image.version": "24.04"
+            }
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 854202751,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/e9beefad0fc63e5768a9bc24b1705083bd98a42a463322dcdbe8bbf8c3c789e5/diff:/var/lib/docker/overlay2/e475f837e0ad0abdd6d39bdb43bbf3efa77d24b525c386a6fdd017ccc80fbc82/diff:/var/lib/docker/overlay2/0b20dbf7b84b21984c5ddd8af665bceb4ecbf2ada26c76815ab9d830581f4840/diff:/var/lib/docker/overlay2/33df36473965f736971e51e051693f29279450cb2f2c7dce174c564bf9b293e2/diff:/var/lib/docker/overlay2/7e83e72d64883c5df0ed9f827883d39ba57de7c965ca1f2aee75d13b78ed90b0/diff:/var/lib/docker/overlay2/350e11c8e651e335921f8ff6748d6a6e6d4f4607e202fbc5e20f733d7b230492/diff:/var/lib/docker/overlay2/04ff39b7011325cf699dd86daf62b156c40caa179b3958bf6c152b7d1749d47c/diff",
+                "MergedDir": "/var/lib/docker/overlay2/5ee6bf41e3788a8efa975ea2fc2a5bea83bda83f53192cebb81d28efc4e52e85/merged",
+                "UpperDir": "/var/lib/docker/overlay2/5ee6bf41e3788a8efa975ea2fc2a5bea83bda83f53192cebb81d28efc4e52e85/diff",
+                "WorkDir": "/var/lib/docker/overlay2/5ee6bf41e3788a8efa975ea2fc2a5bea83bda83f53192cebb81d28efc4e52e85/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:687d50f2f6a697da02e05f2b2b9cb05c1d551f37c404ebe55fdec44b0ae8aa5c",
+                "sha256:476273c13aed6d48e35fc701e1b9ce5b9872bb8a7dfafb9933c6b28f25aa815f",
+                "sha256:041463812b11b12483ddec866729cc7296144e34828b5ebc9bb58d5b5fe76d5c",
+                "sha256:f3cf3549bf742c63c470be7194863d8032e3d4bddb72815576ee2a0894797a28",
+                "sha256:903316b86592b23be930f9f97ed503828213f976ff24956792f775261bc666bc",
+                "sha256:1442738b8a7fca9e0491fca9d6040b357b4105d5e00416c2a888dad67a5e7a8d",
+                "sha256:58b42fa530fa868d1db5aa2be3ecab760450b69a70cd9ebc409551ac47cad10e",
+                "sha256:08ec6efdc372eeb9e22c41b471284441039e023b80792c97ac5a85be1584a4f7"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:18:57.94754896Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: redis:6.2-alpine. İşleme devam ediliyor...
+Etiketleniyor: redis:6.2-alpine -> nexus.cekino.local:5000/nexus.cekino.local/redis:6.2-alpine
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/redis:6.2-alpine
+Docker Inspect Çıktısı (redis:6.2-alpine):
+[
+    {
+        "Id": "sha256:4100b5bd17430263e85ad9d8ab851959b234acaaf378e093f1f98400f4998815",
+        "RepoTags": [
+            "redis:6.2-alpine",
+            "nexus.cekino.local:5000/nexus.cekino.local/redis:6.2-alpine"
+        ],
+        "RepoDigests": [
+            "redis@sha256:eaba718fecd1196d88533de7ba49bf903ad33664a92debb24660a922ecd9cac8",
+            "nexus.cekino.local:5000/nexus.cekino.local/redis@sha256:915aa8d4cd87b7469f440afc4f74afa9535d07ebafee17fd1f9b76800d2c0640"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-10-04T09:56:40Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "6379/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "GOSU_VERSION=1.17",
+                "REDIS_VERSION=6.2.16",
+                "REDIS_DOWNLOAD_URL=http://download.redis.io/releases/redis-6.2.16.tar.gz",
+                "REDIS_DOWNLOAD_SHA=846bff83c26d827d49f8cc8114ea9d1e72eea1169f7de36b8135ea2cec104e7d"
+            ],
+            "Cmd": [
+                "redis-server"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": {
+                "/data": {}
+            },
+            "WorkingDir": "/data",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 35549555,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/ac8a27b5e11746d1d71d17144128e4e0bd12baa13515565c585147f1b6cd0c6c/diff:/var/lib/docker/overlay2/fc7f85d326b8d6f3e4578982ce6226e1d77dff693ef511a7514094c6a1da5728/diff:/var/lib/docker/overlay2/5478a4c4e314e72372a208eb8ac57f776561455baa2283e8d9e1d38cc7c25d19/diff:/var/lib/docker/overlay2/9d3c188f86b61780931846055bd75800598262c92caf0a128029861bcba5996f/diff:/var/lib/docker/overlay2/4a902c9f1efec0e41953f3f402ebe0319810d8004dcb7c24148299bb26789daa/diff:/var/lib/docker/overlay2/259e2e56c9fb2393d56eb98d6d6bc04141cfb9afb70b25fd4a1ab1ca0b49b916/diff:/var/lib/docker/overlay2/19445d3448dac19b598dce3cdd54990e75bff56a6fe6d850171509affb0b50c1/diff",
+                "MergedDir": "/var/lib/docker/overlay2/de0560687892b6ce7fd22df6d129e9a084908a78a9707d6768e733ae9dbc13ba/merged",
+                "UpperDir": "/var/lib/docker/overlay2/de0560687892b6ce7fd22df6d129e9a084908a78a9707d6768e733ae9dbc13ba/diff",
+                "WorkDir": "/var/lib/docker/overlay2/de0560687892b6ce7fd22df6d129e9a084908a78a9707d6768e733ae9dbc13ba/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:75654b8eeebd3beae97271a102f57cdeb794cc91e442648544963a7e951e9558",
+                "sha256:a8a67da2b7e4ed2783e9d4e09539849510f4d9613a0a11fba4b2f3221be14edf",
+                "sha256:4671220f78eec07693e47dbfd2aeaac8ec9206a3a0e6c55876a2d3eee2545e31",
+                "sha256:1ebd630829b63cb5a2f21dbd239922161d30026c33e611d883adc4d0d6fab03f",
+                "sha256:2322de7e4fd7834efb0f14c438fc4546043b95b0ecb98d788bbcd928e357356b",
+                "sha256:281a81c8ba7564fe90e4046cfd151131675d89e375fbc68ac8df2b51e32f046c",
+                "sha256:5f70bf18a086007016e948b04aed3b82103a36bea41755b6cddfaf10ace3c6ef",
+                "sha256:7af91f5ce8de468d91a244fddd9d5ef09173fabb414e7bd5e34c12a2b0f84118"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:20:01.951453659Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)
+Bu imajla çalışan container(lar) bulundu: rabbitmq:3-management-alpine. İşleme devam ediliyor...
+Etiketleniyor: rabbitmq:3-management-alpine -> nexus.cekino.local:5000/nexus.cekino.local/rabbitmq:3-management-alpine
+Push ediliyor: nexus.cekino.local:5000/nexus.cekino.local/rabbitmq:3-management-alpine
+Docker Inspect Çıktısı (rabbitmq:3-management-alpine):
+[
+    {
+        "Id": "sha256:ce360280b1040b8267b64310617e9ae4388343d8a5c70b772d3e46776ca8a2c4",
+        "RepoTags": [
+            "rabbitmq:3-management-alpine",
+            "nexus.cekino.local:5000/nexus.cekino.local/rabbitmq:3-management-alpine"
+        ],
+        "RepoDigests": [
+            "rabbitmq@sha256:a4c3e1b9ec43fddb486e3560d4dea0ac1d520d789b3fa22646850d05bd9c0e1f",
+            "nexus.cekino.local:5000/nexus.cekino.local/rabbitmq@sha256:006874b45daeab9a32f2b13dec298127d74f403e2d2ea05640b257e6ec799930"
+        ],
+        "Parent": "",
+        "Comment": "buildkit.dockerfile.v0",
+        "Created": "2024-09-20T21:15:09Z",
+        "DockerVersion": "",
+        "Author": "",
+        "Config": {
+            "Hostname": "",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": false,
+            "AttachStdout": false,
+            "AttachStderr": false,
+            "ExposedPorts": {
+                "15671/tcp": {},
+                "15672/tcp": {},
+                "15691/tcp": {},
+                "15692/tcp": {},
+                "25672/tcp": {},
+                "4369/tcp": {},
+                "5671/tcp": {},
+                "5672/tcp": {}
+            },
+            "Tty": false,
+            "OpenStdin": false,
+            "StdinOnce": false,
+            "Env": [
+                "PATH=/opt/rabbitmq/sbin:/opt/erlang/bin:/opt/openssl/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+                "ERLANG_INSTALL_PATH_PREFIX=/opt/erlang",
+                "OPENSSL_INSTALL_PATH_PREFIX=/opt/openssl",
+                "RABBITMQ_DATA_DIR=/var/lib/rabbitmq",
+                "RABBITMQ_VERSION=3.13.7",
+                "RABBITMQ_PGP_KEY_ID=0x0A9AF2115F4687BD29803A206B73A36E6026DFCA",
+                "RABBITMQ_HOME=/opt/rabbitmq",
+                "HOME=/var/lib/rabbitmq",
+                "LANG=C.UTF-8",
+                "LANGUAGE=C.UTF-8",
+                "LC_ALL=C.UTF-8"
+            ],
+            "Cmd": [
+                "rabbitmq-server"
+            ],
+            "ArgsEscaped": true,
+            "Image": "",
+            "Volumes": {
+                "/var/lib/rabbitmq": {}
+            },
+            "WorkingDir": "/",
+            "Entrypoint": [
+                "docker-entrypoint.sh"
+            ],
+            "OnBuild": null,
+            "Labels": null
+        },
+        "Architecture": "amd64",
+        "Os": "linux",
+        "Size": 177661344,
+        "GraphDriver": {
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/0febd4cc1033350ece928d0da603b76412522749175fe920f18119759990b684/diff:/var/lib/docker/overlay2/d79d27f8472cd3342ada536d580676a5a9eae9ca377d5dff718eff4ff3a94556/diff:/var/lib/docker/overlay2/ceb7d7330e833e9514e19c09f6a51f0780c67fc92abe54bbb63aab95628b4e61/diff:/var/lib/docker/overlay2/fdccc85e68f8e908bd6b96c94e229240b41f558390ad101eadd95e0dbf5c9b7c/diff:/var/lib/docker/overlay2/c8a816ea27b80c4bed094d966f9965456ef720e1cfbd91a1354cfb10aef8d09f/diff:/var/lib/docker/overlay2/83568924ed1106857c8b70700b994b963f32bc47da0bde0733c97158a37b61fc/diff:/var/lib/docker/overlay2/8949a05388f618fa3e9f246099d9b293cb4d24fb5045a8ed782abf472ff0a076/diff:/var/lib/docker/overlay2/c59dc0719aabb9c136efc8703082db3371f353531e52b7a92ce04f23e59d08a2/diff:/var/lib/docker/overlay2/19445d3448dac19b598dce3cdd54990e75bff56a6fe6d850171509affb0b50c1/diff",
+                "MergedDir": "/var/lib/docker/overlay2/52ce8198f9e6a7b875dcddeb65aef79968f0f808ab87ca717ebf6b1c5c988639/merged",
+                "UpperDir": "/var/lib/docker/overlay2/52ce8198f9e6a7b875dcddeb65aef79968f0f808ab87ca717ebf6b1c5c988639/diff",
+                "WorkDir": "/var/lib/docker/overlay2/52ce8198f9e6a7b875dcddeb65aef79968f0f808ab87ca717ebf6b1c5c988639/work"
+            },
+            "Name": "overlay2"
+        },
+        "RootFS": {
+            "Type": "layers",
+            "Layers": [
+                "sha256:75654b8eeebd3beae97271a102f57cdeb794cc91e442648544963a7e951e9558",
+                "sha256:8d8450c4f5fea29e19fb21fb78ed33aceaeab98f22a7b0b35581396d63337af8",
+                "sha256:ef119e21a83b86364de03e6ca7335cda24eba40d74cf4f5ba1208780b93a016d",
+                "sha256:0f4845b25fa338671a14ca14e9f3c30a952192f018382d01bc4cc61818bf21b9",
+                "sha256:8b71088acb2f50b0f50941d6a2cc3d2fee667b1a9f80be1501c75182d1f2ac50",
+                "sha256:af57a34daa3c1f807b25247d6ca26c568cf01d8894ee669921e76129301c69bb",
+                "sha256:4198ee1f5769acf4fe6737bbcbe63855f83418ffc0e13c3649c3bfe026740cab",
+                "sha256:5ec243de30ba2c4e51088ab02dde9c71e312d0b86a92db475cdb56a70d41987a",
+                "sha256:73838c9668d5d2bc2f46f0398c6570ccf54c64ed096287090dc79bbdd2c82e4c",
+                "sha256:727a6add2379c5a400bd3d8f1e594eb0f1d3bb1af9f88b0c5c0e6e7715d49096"
+            ]
+        },
+        "Metadata": {
+            "LastTagTime": "2024-12-09T10:20:14.631644477Z"
+        }
+    }
+]
+Bekliyor... (10 saniye)

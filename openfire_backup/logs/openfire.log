@@ -1,0 +1,226 @@
+2024.12.10 20:11:31.818 [32mINFO [m [main]: org.jivesoftware.openfire.XMPPServer - Registering shutdown hook (standalone mode)
+2024.12.10 20:11:34.747 [32mINFO [m [main]: org.jivesoftware.util.cache.ConsistencyMonitor - Applying configuration for cache consistency check. Enabled: false
+2024.12.10 20:11:34.842 [32mINFO [m [main]: org.jivesoftware.openfire.XMPPServer - Openfire 4.9.2 [Dec 10, 2024, 8:11:34 PM]
+2024.12.10 20:11:36.345 [33mWARN [m [PluginMonitorTask-2]: org.jivesoftware.openfire.container.AdminConsolePlugin - Admin console: CertificateStoreManager has not been initialized yet. HTTPS will be unavailable.
+2024.12.10 20:11:41.465 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Favicon Misses
+2024.12.10 20:11:41.476 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Favicon Hits
+2024.12.10 20:11:41.595 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.container.AdminConsolePlugin - Admin console listening at http://b6bb12313083:9090
+2024.12.10 20:11:41.596 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.container.PluginManager - Successfully loaded plugin 'admin'.
+2024.12.10 20:12:18.236 [32mINFO [m [Jetty-QTP-AdminConsole-29]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Locked Out Accounts
+2024.12.10 20:12:18.245 [32mINFO [m [Jetty-QTP-AdminConsole-29]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for User
+2024.12.10 20:12:18.245 [32mINFO [m [Jetty-QTP-AdminConsole-29]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Remote Users Existence
+2024.12.10 20:12:23.870 [32mINFO [m [Jetty-QTP-AdminConsole-26]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Group (Shared) Metadata Cache
+2024.12.10 20:12:24.011 [32mINFO [m [Jetty-QTP-AdminConsole-26]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for DNS Records
+2024.12.10 20:12:24.011 [32mINFO [m [Jetty-QTP-AdminConsole-26]: org.jivesoftware.openfire.keystore.IdentityStore - Generating a new private key and corresponding self-signed certificate for domain name 'im.gardiyan.local', using the RSA algorithm (sign-algorithm: SHA256WITHRSAENCRYPTION with a key size of 2048 bits). Certificate will be valid for 1825 days.
+2024.12.10 20:12:25.633 [33mWARN [m [Thread-12]: org.jivesoftware.openfire.container.AdminConsolePlugin - Admin console: CertificateStoreManager has not been initialized yet. HTTPS will be unavailable.
+2024.12.10 20:12:25.864 [32mINFO [m [Thread-12]: org.jivesoftware.openfire.container.AdminConsolePlugin - Admin console listening at http://127.0.0.1:9090
+2024.12.10 20:12:25.873 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Servers Cache
+2024.12.10 20:12:25.873 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Components Cache
+2024.12.10 20:12:25.874 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Users Cache
+2024.12.10 20:12:25.874 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing AnonymousUsers Cache
+2024.12.10 20:12:25.874 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing User Sessions
+2024.12.10 20:12:25.879 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Roster
+2024.12.10 20:12:25.881 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for RosterItems
+2024.12.10 20:12:25.901 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Result Listeners
+2024.12.10 20:12:25.903 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Multicast Service
+2024.12.10 20:12:25.910 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Offline Message Size
+2024.12.10 20:12:25.910 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for VCard
+2024.12.10 20:12:25.955 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Privacy Lists
+2024.12.10 20:12:25.957 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for File Transfer Cache
+2024.12.10 20:12:26.005 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Offline Presence Cache
+2024.12.10 20:12:26.006 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Last Activity Cache
+2024.12.10 20:12:26.006 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Components Sessions
+2024.12.10 20:12:26.006 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Connection Managers Sessions
+2024.12.10 20:12:26.007 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Incoming Server Session Info Cache
+2024.12.10 20:12:26.007 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Sessions by Hostname
+2024.12.10 20:12:26.007 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Client Session Info Cache
+2024.12.10 20:12:26.008 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Directed Presences
+2024.12.10 20:12:26.010 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for PEPServiceManager
+2024.12.10 20:12:26.011 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for File Transfer
+2024.12.10 20:12:26.015 [32mINFO [m [Thread-12]: org.jivesoftware.openfire.pubsub.PubSubPersistenceProviderManager - Loading PubSub persistence provider: class org.jivesoftware.openfire.pubsub.CachingPubsubPersistenceProvider.
+2024.12.10 20:12:26.018 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Published Items
+2024.12.10 20:12:26.019 [32mINFO [m [Thread-12]: org.jivesoftware.openfire.pubsub.CachingPubsubPersistenceProvider - Loading PubSub persistence provider to delegate to: class org.jivesoftware.openfire.pubsub.DefaultPubSubPersistenceProvider.
+2024.12.10 20:12:26.024 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Default Node Configurations
+2024.12.10 20:12:26.042 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Disco Server Features
+2024.12.10 20:12:26.052 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Disco Server Items
+2024.12.10 20:12:26.053 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Components
+2024.12.10 20:12:26.106 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Entity Capabilities
+2024.12.10 20:12:26.106 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Entity Capabilities Users
+2024.12.10 20:12:26.122 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Group
+2024.12.10 20:12:26.122 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Group Metadata Cache
+2024.12.10 20:12:26.145 [32mINFO [m [Thread-12]: org.jivesoftware.openfire.pubsub.PubSubModule - Publish-Subscribe domain: pubsub.im.gardiyan.local
+2024.12.10 20:12:26.157 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC Service Pings Sent
+2024.12.10 20:12:26.160 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC History
+2024.12.10 20:12:26.162 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC Service 'conference' Rooms
+2024.12.10 20:12:26.163 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC Service 'conference' Room Statistics
+2024.12.10 20:12:26.173 [32mINFO [m [Thread-12]: org.jivesoftware.openfire.muc.spi.MultiUserChatServiceImpl - Rescheduling user idle task, recurring every PT15M
+2024.12.10 20:12:26.178 [32mINFO [m [Thread-12]: org.jivesoftware.openfire.muc.spi.MultiUserChatServiceImpl - Multi User Chat domain: conference.im.gardiyan.local
+2024.12.10 20:12:26.371 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for LDAP UserDN
+2024.12.10 20:12:26.722 [32mINFO [m [Thread-12]: org.jivesoftware.openfire.net.SASLAuthentication - Support added for the 'ANONYMOUS' SASL mechanism.
+2024.12.10 20:12:26.722 [32mINFO [m [Thread-12]: org.jivesoftware.openfire.net.SASLAuthentication - Support added for the 'PLAIN' SASL mechanism.
+2024.12.10 20:12:26.762 [32mINFO [m [Thread-12]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Remote Server Configurations
+2024.12.10 20:12:41.676 [32mINFO [m [PluginMonitorExec-3]: org.jivesoftware.openfire.container.PluginManager - Successfully loaded plugin 'search-1.7.4'.
+2024.12.10 20:12:41.677 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.container.PluginMonitor - Finished processing all plugins.
+2024.12.10 20:12:41.802 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_c2s] - Started.
+2024.12.10 20:12:41.823 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_c2s-directTLS] - Started.
+2024.12.10 20:12:41.832 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_s2s] - Started.
+2024.12.10 20:12:41.839 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_s2s-directTLS] - Started.
+2024.12.10 20:12:41.857 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[component] - Started.
+2024.12.10 20:12:41.862 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[component-directTLS] - Started.
+2024.12.10 20:12:41.868 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[connection_manager] - Started.
+2024.12.10 20:12:41.872 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[connection_manager-directTLS] - Started.
+2024.12.10 20:12:41.886 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.EncryptionArtifactFactory - Creating new SslContextFactory instance
+2024.12.10 20:12:41.901 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.http.HttpSessionManager - Starting instance
+2024.12.10 20:12:41.933 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.http.HttpBindManager - HTTP bind service started
+2024.12.10 20:13:38.241 [32mINFO [m [Thread-0]: org.jivesoftware.openfire.XMPPServer - Shutting down plugins ...
+2024.12.10 20:13:38.241 [32mINFO [m [Thread-0]: org.jivesoftware.openfire.container.PluginManager - Shutting down. Unloading all loaded plugins...
+2024.12.10 20:13:40.603 [32mINFO [m [main]: org.jivesoftware.openfire.XMPPServer - Registering shutdown hook (standalone mode)
+2024.12.10 20:13:40.961 [32mINFO [m [main]: org.jivesoftware.util.cache.ConsistencyMonitor - Applying configuration for cache consistency check. Enabled: false
+2024.12.10 20:13:40.982 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Servers Cache
+2024.12.10 20:13:40.983 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Components Cache
+2024.12.10 20:13:40.984 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Users Cache
+2024.12.10 20:13:40.984 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing AnonymousUsers Cache
+2024.12.10 20:13:40.984 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing User Sessions
+2024.12.10 20:13:40.992 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Roster
+2024.12.10 20:13:40.994 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for RosterItems
+2024.12.10 20:13:41.026 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Result Listeners
+2024.12.10 20:13:41.031 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Multicast Service
+2024.12.10 20:13:41.036 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Offline Message Size
+2024.12.10 20:13:41.040 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for VCard
+2024.12.10 20:13:41.211 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Privacy Lists
+2024.12.10 20:13:41.213 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for File Transfer Cache
+2024.12.10 20:13:41.296 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Offline Presence Cache
+2024.12.10 20:13:41.296 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Last Activity Cache
+2024.12.10 20:13:41.301 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for User
+2024.12.10 20:13:41.301 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Remote Users Existence
+2024.12.10 20:13:41.336 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Components Sessions
+2024.12.10 20:13:41.336 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Connection Managers Sessions
+2024.12.10 20:13:41.336 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Incoming Server Session Info Cache
+2024.12.10 20:13:41.336 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Sessions by Hostname
+2024.12.10 20:13:41.337 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Client Session Info Cache
+2024.12.10 20:13:41.338 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Directed Presences
+2024.12.10 20:13:41.339 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for PEPServiceManager
+2024.12.10 20:13:41.341 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for File Transfer
+2024.12.10 20:13:41.346 [32mINFO [m [main]: org.jivesoftware.openfire.pubsub.PubSubPersistenceProviderManager - Loading PubSub persistence provider: class org.jivesoftware.openfire.pubsub.CachingPubsubPersistenceProvider.
+2024.12.10 20:13:41.348 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Published Items
+2024.12.10 20:13:41.349 [32mINFO [m [main]: org.jivesoftware.openfire.pubsub.CachingPubsubPersistenceProvider - Loading PubSub persistence provider to delegate to: class org.jivesoftware.openfire.pubsub.DefaultPubSubPersistenceProvider.
+2024.12.10 20:13:41.354 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Default Node Configurations
+2024.12.10 20:13:41.369 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Disco Server Features
+2024.12.10 20:13:41.375 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Disco Server Items
+2024.12.10 20:13:41.376 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Components
+2024.12.10 20:13:41.545 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Entity Capabilities
+2024.12.10 20:13:41.545 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Entity Capabilities Users
+2024.12.10 20:13:41.571 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Group (Shared) Metadata Cache
+2024.12.10 20:13:41.572 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Group
+2024.12.10 20:13:41.572 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Group Metadata Cache
+2024.12.10 20:13:41.594 [32mINFO [m [main]: org.jivesoftware.openfire.pubsub.PubSubModule - Publish-Subscribe domain: pubsub.im.gardiyan.local
+2024.12.10 20:13:41.610 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC Service Pings Sent
+2024.12.10 20:13:41.612 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC History
+2024.12.10 20:13:41.615 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC Service 'conference' Rooms
+2024.12.10 20:13:41.615 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC Service 'conference' Room Statistics
+2024.12.10 20:13:41.627 [32mINFO [m [main]: org.jivesoftware.openfire.muc.spi.MultiUserChatServiceImpl - Rescheduling user idle task, recurring every PT15M
+2024.12.10 20:13:41.632 [32mINFO [m [main]: org.jivesoftware.openfire.muc.spi.MultiUserChatServiceImpl - Multi User Chat domain: conference.im.gardiyan.local
+2024.12.10 20:13:41.658 [32mINFO [m [main]: org.jivesoftware.openfire.XMPPServer - Openfire 4.9.2 [Dec 10, 2024, 8:13:41 PM]
+2024.12.10 20:13:41.900 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for DNS Records
+2024.12.10 20:13:41.903 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for LDAP UserDN
+2024.12.10 20:13:42.022 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.EncryptionArtifactFactory - Creating new SslContextFactory instance
+2024.12.10 20:13:42.575 [32mINFO [m [main]: org.jivesoftware.openfire.net.SASLAuthentication - Support added for the 'ANONYMOUS' SASL mechanism.
+2024.12.10 20:13:42.575 [32mINFO [m [main]: org.jivesoftware.openfire.net.SASLAuthentication - Support added for the 'PLAIN' SASL mechanism.
+2024.12.10 20:13:42.637 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Remote Server Configurations
+2024.12.10 20:13:43.044 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Favicon Misses
+2024.12.10 20:13:43.044 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Favicon Hits
+2024.12.10 20:13:43.080 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.container.AdminConsolePlugin - Admin console listening at:
+  http://0.0.0.0:9090
+  https://0.0.0.0:9091
+2024.12.10 20:13:43.080 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.container.PluginManager - Successfully loaded plugin 'admin'.
+2024.12.10 20:13:43.145 [32mINFO [m [PluginMonitorExec-3]: org.jivesoftware.openfire.container.PluginManager - Successfully loaded plugin 'search-1.7.4'.
+2024.12.10 20:13:43.146 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.container.PluginMonitor - Finished processing all plugins.
+2024.12.10 20:13:43.307 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_c2s] - Started.
+2024.12.10 20:13:43.326 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_c2s-directTLS] - Started.
+2024.12.10 20:13:43.337 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_s2s] - Started.
+2024.12.10 20:13:43.342 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_s2s-directTLS] - Started.
+2024.12.10 20:13:43.367 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[component] - Started.
+2024.12.10 20:13:43.375 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[component-directTLS] - Started.
+2024.12.10 20:13:43.383 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[connection_manager] - Started.
+2024.12.10 20:13:43.387 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[connection_manager-directTLS] - Started.
+2024.12.10 20:13:43.398 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.EncryptionArtifactFactory - Creating new SslContextFactory instance
+2024.12.10 20:13:43.403 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.http.HttpSessionManager - Starting instance
+2024.12.10 20:13:43.432 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.http.HttpBindManager - HTTP bind service started
+2024.12.10 20:13:53.890 [32mINFO [m [Jetty-QTP-AdminConsole-33]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Locked Out Accounts
+2024.12.10 20:13:53.899 [32mINFO [m [Jetty-QTP-AdminConsole-33]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Sequences
+2024.12.10 20:14:16.994 [32mINFO [m [socket_c2s-thread-2]: org.jivesoftware.openfire.pubsub.DefaultPubSubPersistenceProvider - No nodes found in pubsub for service gardiyan_sunucu@im.gardiyan.local
+2024.12.10 21:40:33.420 [32mINFO [m [main]: org.jivesoftware.openfire.XMPPServer - Registering shutdown hook (standalone mode)
+2024.12.10 21:40:35.629 [32mINFO [m [main]: org.jivesoftware.util.cache.ConsistencyMonitor - Applying configuration for cache consistency check. Enabled: false
+2024.12.10 21:40:35.745 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Servers Cache
+2024.12.10 21:40:35.746 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Components Cache
+2024.12.10 21:40:35.754 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Users Cache
+2024.12.10 21:40:35.755 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing AnonymousUsers Cache
+2024.12.10 21:40:35.755 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing User Sessions
+2024.12.10 21:40:35.815 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Roster
+2024.12.10 21:40:35.818 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for RosterItems
+2024.12.10 21:40:35.988 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Routing Result Listeners
+2024.12.10 21:40:35.993 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Multicast Service
+2024.12.10 21:40:36.041 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Offline Message Size
+2024.12.10 21:40:36.066 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for VCard
+2024.12.10 21:40:36.930 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Privacy Lists
+2024.12.10 21:40:36.937 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for File Transfer Cache
+2024.12.10 21:40:37.465 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Offline Presence Cache
+2024.12.10 21:40:37.465 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Last Activity Cache
+2024.12.10 21:40:37.473 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for User
+2024.12.10 21:40:37.473 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Remote Users Existence
+2024.12.10 21:40:37.575 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Components Sessions
+2024.12.10 21:40:37.584 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Connection Managers Sessions
+2024.12.10 21:40:37.585 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Incoming Server Session Info Cache
+2024.12.10 21:40:37.589 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Sessions by Hostname
+2024.12.10 21:40:37.590 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Client Session Info Cache
+2024.12.10 21:40:37.591 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Directed Presences
+2024.12.10 21:40:37.593 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for PEPServiceManager
+2024.12.10 21:40:37.631 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for File Transfer
+2024.12.10 21:40:37.651 [32mINFO [m [main]: org.jivesoftware.openfire.pubsub.PubSubPersistenceProviderManager - Loading PubSub persistence provider: class org.jivesoftware.openfire.pubsub.CachingPubsubPersistenceProvider.
+2024.12.10 21:40:37.675 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Published Items
+2024.12.10 21:40:37.675 [32mINFO [m [main]: org.jivesoftware.openfire.pubsub.CachingPubsubPersistenceProvider - Loading PubSub persistence provider to delegate to: class org.jivesoftware.openfire.pubsub.DefaultPubSubPersistenceProvider.
+2024.12.10 21:40:37.724 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Default Node Configurations
+2024.12.10 21:40:37.805 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Disco Server Features
+2024.12.10 21:40:37.830 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Disco Server Items
+2024.12.10 21:40:37.831 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Components
+2024.12.10 21:40:38.741 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Entity Capabilities
+2024.12.10 21:40:38.741 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Entity Capabilities Users
+2024.12.10 21:40:38.884 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Group
+2024.12.10 21:40:38.884 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Group Metadata Cache
+2024.12.10 21:40:38.906 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created local-only cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Group (Shared) Metadata Cache
+2024.12.10 21:40:39.050 [32mINFO [m [main]: org.jivesoftware.openfire.pubsub.PubSubModule - Publish-Subscribe domain: pubsub.im.gardiyan.local
+2024.12.10 21:40:39.314 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC Service Pings Sent
+2024.12.10 21:40:39.350 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC History
+2024.12.10 21:40:39.366 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC Service 'conference' Rooms
+2024.12.10 21:40:39.366 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for MUC Service 'conference' Room Statistics
+2024.12.10 21:40:39.441 [32mINFO [m [main]: org.jivesoftware.openfire.muc.spi.MultiUserChatServiceImpl - Rescheduling user idle task, recurring every PT15M
+2024.12.10 21:40:39.476 [32mINFO [m [main]: org.jivesoftware.openfire.muc.spi.MultiUserChatServiceImpl - Multi User Chat domain: conference.im.gardiyan.local
+2024.12.10 21:40:39.645 [32mINFO [m [main]: org.jivesoftware.openfire.XMPPServer - Openfire 4.9.2 [Dec 10, 2024, 9:40:39 PM]
+2024.12.10 21:40:41.186 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for DNS Records
+2024.12.10 21:40:41.401 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for LDAP UserDN
+2024.12.10 21:40:41.738 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.EncryptionArtifactFactory - Creating new SslContextFactory instance
+2024.12.10 21:40:46.263 [32mINFO [m [main]: org.jivesoftware.openfire.net.SASLAuthentication - Support added for the 'ANONYMOUS' SASL mechanism.
+2024.12.10 21:40:46.264 [32mINFO [m [main]: org.jivesoftware.openfire.net.SASLAuthentication - Support added for the 'PLAIN' SASL mechanism.
+2024.12.10 21:40:46.802 [32mINFO [m [main]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Remote Server Configurations
+2024.12.10 21:40:47.657 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Favicon Misses
+2024.12.10 21:40:47.675 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Favicon Hits
+2024.12.10 21:40:47.902 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.container.AdminConsolePlugin - Admin console listening at:
+  http://0.0.0.0:9090
+  https://0.0.0.0:9091
+2024.12.10 21:40:47.914 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.container.PluginManager - Successfully loaded plugin 'admin'.
+2024.12.10 21:40:48.592 [32mINFO [m [PluginMonitorExec-3]: org.jivesoftware.openfire.container.PluginManager - Successfully loaded plugin 'search-1.7.4'.
+2024.12.10 21:40:48.651 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.container.PluginMonitor - Finished processing all plugins.
+2024.12.10 21:40:49.550 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_c2s] - Started.
+2024.12.10 21:40:49.631 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_c2s-directTLS] - Started.
+2024.12.10 21:40:49.686 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_s2s] - Started.
+2024.12.10 21:40:49.721 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[socket_s2s-directTLS] - Started.
+2024.12.10 21:40:49.772 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[component] - Started.
+2024.12.10 21:40:49.803 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[component-directTLS] - Started.
+2024.12.10 21:40:49.843 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[connection_manager] - Started.
+2024.12.10 21:40:49.851 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.ConnectionListener[connection_manager-directTLS] - Started.
+2024.12.10 21:40:49.890 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.spi.EncryptionArtifactFactory - Creating new SslContextFactory instance
+2024.12.10 21:40:49.908 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.http.HttpSessionManager - Starting instance
+2024.12.10 21:40:50.152 [32mINFO [m [PluginMonitorTask-2]: org.jivesoftware.openfire.http.HttpBindManager - HTTP bind service started
+2024.12.10 21:43:02.004 [32mINFO [m [Jetty-QTP-AdminConsole-32]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Locked Out Accounts
+2024.12.10 21:43:02.010 [32mINFO [m [Jetty-QTP-AdminConsole-32]: org.jivesoftware.util.cache.CacheFactory - Created cache [org.jivesoftware.util.cache.DefaultLocalCacheStrategy] for Sequences
+2024.12.10 21:43:23.953 [32mINFO [m [socket_c2s-thread-2]: org.jivesoftware.openfire.pubsub.DefaultPubSubPersistenceProvider - No nodes found in pubsub for service gardiyan_sunucu@im.gardiyan.local
