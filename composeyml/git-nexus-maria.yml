@@ -1,0 +1,95 @@
+
+services:
+  mariadb:
+    image: mariadb:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: gardiyangitea
+      MYSQL_USER: gardiyangitea
+      MYSQL_PASSWORD: VWV?hNmiy*w?Ka-
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - app_network
+
+  gitea:
+    image: gitea/gitea:latest
+    restart: always
+    environment:
+      - USER_UID=1000
+      - USER_GID=1000
+      - DB_TYPE=mysql
+      - DB_HOST=mariadb:3306
+      - DB_NAME=gardiyangitea
+      - DB_USER=gardiyangitea
+      - DB_PASSWD=VWV?hNmiy*w?Ka-
+    volumes:
+      - gitea_data:/data
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mariadb
+    networks:
+      - app_network
+
+  nginx:
+    image: nginx:latest
+    restart: always
+    ports:
+      - "1080:1080"
+      - "10442:10442"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./SSL/:/etc/nginx/ssl:ro
+    depends_on:
+      - gitea
+      - nexus
+    networks:
+      - app_network
+
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    ports:
+      - "7000:5432"
+    environment:
+      POSTGRES_USER: nexus
+      POSTGRES_PASSWORD: Gardiyan.2025!
+      POSTGRES_DB: nexus
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: postgres -c max_connections=500    
+    networks:
+      - app_network
+
+  nexus:
+    image: sonatype/nexus3:3.76.1
+    container_name: nexus
+    restart: always
+    ports:
+      - "8081:8081"
+      - "5001-5015:5001-5015"  
+    volumes:
+      - nexus_data:/nexus-data
+    environment:
+      INSTALL4J_ADD_VM_PARAMS: >
+        -Xms1200m -Xmx1200m
+        -Dnexus.datastore.enabled=true
+        -Dnexus.datastore.nexus.jdbcUrl=jdbc:postgresql://postgres:5432/nexus
+        -Dnexus.datastore.nexus.username=nexus
+        -Dnexus.datastore.nexus.password=Gardiyan.2025!
+    depends_on:
+      - postgres
+    networks:
+      - app_network
+  
+volumes:
+  mariadb_data:
+  gitea_data:
+  nexus_data:
+  postgres_data:
+
+networks:
+  app_network:
+    driver: bridge
