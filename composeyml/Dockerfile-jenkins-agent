@@ -1,0 +1,68 @@
+FROM ubuntu:22.04
+
+RUN apt-get update && \
+    apt-get install -y curl openjdk-17-jdk && \
+    apt-get clean
+
+RUN mkdir -p /workdir
+
+WORKDIR /workdir
+
+RUN apt-get update && apt-get install -y \
+    wget \
+    git \
+    apt-transport-https \
+    software-properties-common \
+    ca-certificates \
+    gnupg2 \
+    unzip \
+    default-jre-headless \
+    curl \
+    npm \
+    software-properties-common \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
+
+RUN add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu jammy stable"
+
+RUN apt-cache policy docker-ce
+
+RUN apt-get -y install docker-ce
+
+RUN apt-get -y install zlib1g
+
+RUN apt-get -y install maven
+
+#RUN curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3 && \
+#    chmod +x get_helm.sh && \
+#    ./get_helm.sh && \
+#    rm get_helm.sh
+
+RUN curl -s https://raw.githubusercontent.com/kubernetes-sigs/kustomize/master/hack/install_kustomize.sh  | bash
+
+RUN mv kustomize /usr/local/bin
+
+RUN wget https://github.com/mikefarah/yq/releases/download/v4.13.2/yq_linux_amd64 -O /usr/local/bin/yq && \
+    chmod +x /usr/local/bin/yq
+
+RUN echo '{"insecure-registries": ["172.16.20.141:8085", "172.16.20.141:55443"]}' > /etc/docker/daemon.json
+
+RUN npm i -g npx
+RUN npm install -g sonarqube-scanner
+RUN git config --global http.sslVerify false
+RUN curl -sO http://172.16.18.110:8080/jnlpJars/agent.jar
+
+RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+
+
+RUN \
+    echo "ulimits: $(ulimit -Sn):$(ulimit -Hn)"; \
+    sed -i 's/ulimit -Hn/# ulimit -Hn/g' /etc/init.d/docker; \
+    service docker start; \
+    rm -rf /var/cache/apt;
+
+CMD java -jar agent.jar -url http://172.16.18.110:8080 \
+    -secret 1f918a3049e48a76aa03f1731cb48b9e23f3e129d7bd70e0bd40892fff8b11f3 \
+    -name "jenkins-build-agent-01" \
+    -workDir "/workdir"

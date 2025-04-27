@@ -1,0 +1,338 @@
+services:
+  postgres:
+    image: repo.gardiyan.com/postgres:15
+    container_name: postgres
+    networks:
+      - gardiyan_network
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Cekino.123!
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./dbbackup/init.sql:/docker-entrypoint-initdb.d/00_init.sql    
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    
+  netdisco-backend:
+    image: repo.gardiyan.com/netdisco:latest-backend
+    hostname: netdisco-backend
+    networks:
+      - gardiyan_network
+    init: true
+    volumes:
+      - "./netdisco/nd-site-local:/home/netdisco/nd-site-local"
+      - "./netdisco/config/deployment.yml:/home/netdisco/environments/deployment.yml:rw"
+     # - ./entrypoint.sh:/home/netdisco/bin/entrypoint.sh
+     # - netdisco_data:/tmp
+    environment:
+      NETDISCO_DOMAIN:  discover
+      NETDISCO_DB_HOST: postgres
+      NETDISCO_DB_USER: postgres
+      NETDISCO_DB_PASS: Cekino.123!
+      NETDISCO_DB_NAME: karcin_network
+    #entrypoint: ["/bin/ash", "-c", "/home/netdisco/bin/entrypoint.sh"]    
+    depends_on:
+      postgres:
+              condition: service_healthy
+    dns_opt:
+      - 'ndots:0'
+      - 'timeout:1'
+      - 'retries:0'
+      - 'attempts:1'
+      - edns0
+      - trustad
+
+  netdisco-web:
+    image: repo.gardiyan.com/netdisco:latest-web
+    hostname: netdisco-web
+    networks:
+      - gardiyan_network
+    init: true
+    volumes:
+      - "./netdisco/nd-site-local:/home/netdisco/nd-site-local"
+      - "./netdisco/config:/home/netdisco/environments"
+    environment:
+      NETDISCO_DOMAIN:  discover
+      NETDISCO_DB_HOST: postgres
+      IPV: 4
+      NETDISCO_DB_USER: postgres
+      NETDISCO_DB_PASS: Cekino.123!
+      NETDISCO_DB_NAME: karcin_network
+    ports:
+      - "5001:5000"
+    depends_on:
+      postgres:
+              condition: service_healthy
+    dns_opt:
+      - 'ndots:0'
+      - 'timeout:1'
+      - 'retries:0'
+      - 'attempts:1'
+      - edns0
+      - trustad
+
+  netdisco-do:
+    image: repo.gardiyan.com/netdisco/netdisco:latest-do
+    # use same hostname as backend to satisfy skiplist check (#68)
+    hostname: netdisco-backend
+    networks:
+      - gardiyan_network
+    volumes:
+      - "./netdisco/nd-site-local:/home/netdisco/nd-site-local"
+      - "./netdisco/config:/home/netdisco/environments"
+    environment:
+      NETDISCO_DOMAIN:  discover
+      NETDISCO_DB_HOST: postgres
+      NETDISCO_DB_USER: postgres
+      NETDISCO_DB_PASS: Cekino.123!
+      NETDISCO_DB_NAME: karcin_network
+    depends_on:
+      postgres:
+              condition: service_healthy
+    profiles:
+      - cli-manual
+  network:
+    image: repo.gardiyan.com/network:latest
+    container_name: network
+    networks:
+      - gardiyan_network
+    restart: always
+    ports:
+      - "8191:8181"
+    volumes:
+      - network_data:/data
+      - ./etcNetwork/com.karcin.network.datasource.cfg:/opt/karaf/etc/com.karcin.network.datasource.cfg
+      - ./etcNetwork/com.karcin.network.cfg:/opt/karaf/etc/com.karcin.network.cfg
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - ./netdisco/config/deployment.yml:/home/gardiyan/Gardiyan/netdisco/deployment.yml:rw
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      sh -c "
+      if [ ! -f /data/initialized ]; then
+        echo 'First time startup: Running db-deploy';
+        /opt/karaf/bin/karaf & sleep 60 && /opt/karaf/bin/client 'karcin:db-deploy';
+        touch /data/initialized;
+        wait;
+      else
+       echo 'Skipping db-deploy, already initialized';
+       /opt/karaf/bin/karaf;
+      fi"
+  trap-listener:
+    image: repo.gardiyan.com/trap_listener:1.0.0.9
+    container_name: karcin_trap-listener
+    restart: always
+    networks:
+      - gardiyan_network
+    depends_on:
+      - mongo-network
+    ports:
+      - "162:162/udp"
+    environment:
+      MONGO_HOST: "mongo-network"
+      MONGO_PORT: "27017"
+      MONGO_PASSWORD: "Cekino.123!"
+      MONGO_USER: "gardiyan"
+      MONGO_DB_NAME: "karcin_network"
+      COLLECTION_NAME: "trap"
+        
+        
+  syslog-listener:
+    image: repo.gardiyan.com/syslog_listener:1.0.0.3
+    container_name: syslog-listener
+    networks:
+      - gardiyan_network
+    restart: always  
+    depends_on:
+     - mongo-network
+    ports:
+      - "515:514/udp"
+    environment:
+      MONGO_HOST: "mongo-network"
+      MONGO_PORT: "27017"
+      MONGO_PASSWORD: "Cekino.123!"
+      MONGO_USER: "gardiyan"
+      MONGO_DB_NAME: "karcin_network"
+      COLLECTION_NAME: "syslog"
+        
+  mongo-network:
+    image: repo.gardiyan.com/mongo:4.4.7
+    container_name: mongo-network
+    networks:
+      - gardiyan_network
+    restart: always
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo-network_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: gardiyan
+      MONGO_INITDB_ROOT_PASSWORD: Cekino.123!
+      MONGO_INITDB_DATABASE: karcin_network
+
+  network-worker:
+    image: repo.gardiyan.com/network_worker:latest
+    container_name: network-worker
+    networks:
+      - gardiyan_network
+    restart: always
+    ports:
+      - "8080:8091"
+    environment:
+      MONGODB_URI: mongodb://gardiyan:Cekino.123!@mongo-network:27017
+      MONGODB_DATABASE: karcin_network
+      MAX_THREADS: 20
+    depends_on:
+      - mongo-network
+  zookeeper:
+    image: repo.gardiyan.com/cp-zookeeper:latest
+    container_name: zookeeper
+    networks:
+      - gardiyan_network
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    healthcheck:
+      test: ["CMD", "echo", "ruok", "|", "nc", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5      
+ 
+  kafka:
+    image: repo.gardiyan.com/cp-kafka:latest
+    container_name: kafka
+    restart: always
+    networks:
+      - gardiyan_network
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    environment:
+      KAFKA_BROKER_ID: 1 # 1 adet lun açıccak
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_LOG_RETENTION_MS: 60000             # 1 dakika veri tutuyor istenirse artırabilinir
+      KAFKA_LOG_SEGMENT_MS: 30000                # 30 saniyelik segment
+      KAFKA_DELETE_RETENTION_MS: 1000
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 10000  
+      KAFKA_OFFSETS_RETENTION_MINUTES: 5
+      KAFKA_NUM_PARTITIONS: 1  
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "kafka:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+
+  goflow2:
+    image: repo.gardiyan.com/goflow2:latest
+    container_name: goflow2
+    networks:
+      - gardiyan_network
+    restart: always
+    ports:
+      - "2055:2055/udp"  # NetFlow
+      - "6343:6343/udp"  # sFlow
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: >
+      -transport=kafka
+      -transport.kafka.brokers=kafka:9092
+      -transport.kafka.topic=flows-messages
+      -transport.kafka.version=2.8.0
+      -format=json
+      -loglevel=debug  
+  grafana:
+    image: repo.gardiyan.com/grafana:latest
+    container_name: grafana
+    networks:
+      - gardiyan_network
+    restart: always
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=Gardiyan.2025!
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_SECURITY_COOKIE_SAMESITE=none
+      - GF_FEATURE_TOGGLES_DASHBOARDSCENESOLO=true
+      - GF_SERVER_ROOT_URL=http://grafana:3001
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    volumes:
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards:/grafana/dashboards
+      - grafana_data:/var/lib/grafana  
+    depends_on:
+      - influxdb
+  influxdb:
+    image: repo.gardiyan.com/influxdb:latest
+    container_name: influxdb
+    networks:
+      - gardiyan_network
+    restart: always
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=Gardiyan.2025!
+      - DOCKER_INFLUXDB_INIT_ORG=gardiyan
+      - DOCKER_INFLUXDB_INIT_BUCKET=netflow
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=xcbA_bDTtj9y1vjdWc6h1f0ErAI8q-SH2Lb_xfC3uz8g_k6dKv-_eOXd_cRKDB0na1k4BTmIWOk9HROimBPgNA==
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5    
+  telegraf:
+    image: repo.gardiyan.com/telegraf:latest
+    container_name: telegraf
+    networks:
+      - gardiyan_network
+    restart: always
+    depends_on:
+      kafka:
+        condition: service_healthy
+      influxdb:
+        condition: service_healthy
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    environment:
+      HOSTNAME: telegraf
+  influx-network:
+    image: repo.gardiyan.com/influx:2.5.3.30
+    container_name: influx-network
+    networks:
+      - gardiyan_network
+    restart: always
+    ports:
+      - "8787:8383"
+    environment:
+      INFLUX_URL: http://influxdb:8086/
+        #INFLUX_TOKEN: EBbQzwaOB3I5IP4XVU9A1hWSAxAfIBvuc0mAXYLkwEq8MNBmv_qcgI_QYTbEbhUmPJUXyFZIM5whekMAunEcww==
+      INFLUX_TOKEN: xcbA_bDTtj9y1vjdWc6h1f0ErAI8q-SH2Lb_xfC3uz8g_k6dKv-_eOXd_cRKDB0na1k4BTmIWOk9HROimBPgNA==
+      INFLUX_ORGANIZATION: gardiyan
+      INFLUX_BUCKET: netflow         
+volumes:
+  postgres_data:
+  network_data:
+  mongo-network_data:
+  grafana_data:
+networks:
+  gardiyan_network:
+    driver: bridge

@@ -1,0 +1,104 @@
+pipeline {
+    agent any
+    environment {
+        REGISTRY = "172.16.20.141:5002"
+        IMAGE_NAME = "postgres"
+        TAG = "13"
+        DOCKERFILE_NAME ="Postgres"  
+    }
+    stages {
+        stage('Checkout Git Repository') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'gitea-credentials', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                        sh '''
+                        if [ -d "dockerfile" ]; then
+                            echo "Eski dizin bulundu, siliyoruz..."
+                            rm -rf dockerfile
+                        fi
+                        git clone http://${GIT_USER}:${GIT_PASS}@git.cekino.local/s.parti/dockerfile.git
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh "docker build -f ./dockerfile/${DOCKERFILE_NAME} -t ${REGISTRY}/${IMAGE_NAME}:${TAG} ./dockerfile"
+                }
+            }
+        }
+        stage('Login to Nexus') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                        sh '''
+                        #!/bin/bash
+                        set -e
+                        echo "$NEXUS_PASS" | docker login -u "$NEXUS_USER" --password-stdin "$REGISTRY"
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Push Docker Image to Nexus') {
+            steps {
+                script {
+                    sh "docker push ${REGISTRY}/${IMAGE_NAME}:${TAG}"
+                }
+            }
+        }
+        stage('Cleanup') {
+            steps {
+                script {
+                    sh "docker rmi ${REGISTRY}/${IMAGE_NAME}:${TAG}"
+                }
+            }
+        }
+    }
+    post {
+        success {
+            script {
+                def mailList = "s.parti@gardiyan.com,c.kara@gardiyan.com,e.akdeniz@gardiyan.com"
+                emailext(
+                    subject: "✅ Pipeline tamamlandı: ${JOB_NAME} #${BUILD_NUMBER}",
+                    body: """
+                        <h1>🚀 Pipeline başarıyla tamamlandı</h1>
+                        <ul>
+                            <li><b>Job:</b> ${JOB_NAME}</li>
+                            <li><b>Build Number:</b> ${BUILD_NUMBER}</li>
+                            <li><b>Result:</b> ${currentBuild.result}</li>
+                        </ul>
+                        <p><b>İlgili imajın docker container hali oluşturuldu ve https://nexusdev.gardiyan.com adresindeki repoya atıldı. 🎉</b></p>
+                        <p><a href=\"${BUILD_URL}\">Console loglarını görmek için tıklayın</a></p>
+                    """,
+                    to: mailList,
+                    from: "devops@gardiyan.com",
+                    mimeType: 'text/html'
+                )
+            }
+        }
+        failure {
+            script {
+                def mailList = "s.parti@gardiyan.com,c.kara@gardiyan.com,e.akdeniz@gardiyan.com"
+                emailext(
+                    subject: "❌ Jenkins Pipeline başarısız: ${JOB_NAME} #${BUILD_NUMBER}",
+                    body: """
+                        <h2>⚠️ Pipeline başarısız oldu </h2>
+                        <ul>
+                            <li><b>Job:</b> ${JOB_NAME}</li>
+                            <li><b>Build Number:</b> ${BUILD_NUMBER}</li>
+                            <li><b>Result:</b> ${currentBuild.result}</li>
+                        </ul>
+                        <p><b>Lütfen pipeline console loglarını kontrol edin</b></p>
+                        <p><a href=\"${BUILD_URL}\">Logları Görüntüle</a></p>
+                    """,
+                    to: mailList,
+                    from: "devops@gardiyan.com",
+                    mimeType: 'text/html'
+                )
+            }
+        }
+    }
+}

@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+    options {
+        disableConcurrentBuilds()
+    }
+    triggers {
+        GenericTrigger(
+            token: 'admin_frontend',
+            genericVariables: [
+                [key: 'PAYLOAD', value: '$']
+            ],
+            printPostContent: true,
+            printContributedVariables: true,
+            silentResponse: false
+        )
+    }
+    environment {
+        DOCKER_REGISTRY  = 'nexusdev.cekino.com:5005'
+        IMAGE_NAME       = 'admin_frontend'
+        DEPLOY_SERVER    = '172.16.18.93'
+        COMPOSE_FILE_PATH = '/home/gardiyan/Gardiyan/docker-compose.yml'
+    }
+    stages {
+        stage('Process Webhook and Deploy') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'Deploy', usernameVariable: 'DEPLOY_USER', passwordVariable: 'DEPLOY_PASSWORD')]) {
+                        if (env.PAYLOAD) {
+                            
+                            def parsed = parseWebhookPayload(env.PAYLOAD)
+                            echo "Gelen payload: ${parsed}"
+                            
+                            def repoName = parsed.repoName
+                            
+                            if (repoName != IMAGE_NAME) {
+                                echo "Payload, ${IMAGE_NAME} dışında bir component içeriyor (${repoName}). Deployment yapılmayacak."
+                                currentBuild.result = 'SUCCESS'
+                                return
+                            }
+                            
+                                                    
+                            sh """
+                                sshpass -p '${DEPLOY_PASSWORD}' ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_SERVER} \\
+                                "sed -i 's|${DOCKER_REGISTRY}/${IMAGE_NAME}:[^\\s]*|${DOCKER_REGISTRY}/${IMAGE_NAME}:latest|' ${COMPOSE_FILE_PATH}"
+                            """
+                            
+                            echo "Compose dosyası güncellendi. ${IMAGE_NAME} container'ı yeniden başlatılıyor..."
+                            
+                            
+                            sh """
+                                sshpass -p '${DEPLOY_PASSWORD}' ssh -o StrictHostKeyChecking=no ${DEPLOY_USER}@${DEPLOY_SERVER} \\
+                                "cd \$(dirname ${COMPOSE_FILE_PATH}) && docker compose down ${IMAGE_NAME} && sleep && 15 docker compose pull ${IMAGE_NAME} &&  docker compose up -d ${IMAGE_NAME}"
+                            """
+                        } else {
+                            echo "Webhook payload alınamadı. Deployment yapılmayacak."
+                        }
+                    }
+                }
+            }
+        }
+    }
+    post {
+        always {
+            echo "Workspace temizleniyor..."
+            deleteDir()
+        }
+    }
+}
+
+@NonCPS
+def parseWebhookPayload(String payloadText) {
+    def json = new groovy.json.JsonSlurper().parseText(payloadText)
+    def repoName = json.component?.name as String
+    return [repoName: repoName]
+}

@@ -1,0 +1,118 @@
+version: '3.7'
+
+networks:
+  gardiyan_network:
+    driver: bridge
+volumes:
+  logs:
+
+services:
+  frontend:
+    build:
+      context: ..
+      dockerfile: build/go/frontend/Dockerfile
+    command: strelka-frontend -locallog=true -kafkalog=false
+    ports:
+      - 57314:57314  # must match the port in frontend.yaml
+    networks:
+      - gardiyan_network
+    volumes:
+      - ../configs/go/frontend/:/etc/strelka/:ro
+      - logs:/var/log/strelka/
+    restart: unless-stopped
+    depends_on:
+      - coordinator
+      - gatekeeper
+
+  backend:
+    build:
+      context: ..
+      dockerfile: build/python/backend/Dockerfile
+    command: strelka-backend
+    shm_size: 512mb  # increase as necessary, required for some scanners
+    networks:
+      - gardiyan_network
+    volumes:
+      - ../configs/python/backend/:/etc/strelka/:ro
+    restart: unless-stopped
+    depends_on:
+      - coordinator
+    # deploy:
+    #   mode: replicated
+    #   replicas: 2
+    #   endpoint_mode: vip
+
+  manager:
+    build:
+      context: ..
+      dockerfile: build/go/manager/Dockerfile
+    command: strelka-manager
+    restart: unless-stopped
+    networks:
+      - gardiyan_network
+    volumes:
+      - ../configs/go/manager/:/etc/strelka/:ro
+    depends_on:
+      - coordinator
+
+  coordinator:
+    image: redis:alpine
+    command: redis-server --save "" --appendonly no  # alt: use config file via volume mapping
+    restart: unless-stopped
+    networks:
+      - gardiyan_network
+
+  gatekeeper:
+    image: redis:alpine
+    command: redis-server --save "" --appendonly no --maxmemory-policy allkeys-lru  # alt: use config file via volume mapping
+    restart: unless-stopped
+    networks:
+      - gardiyan_network
+
+  jaeger:
+    image: jaegertracing/all-in-one:1.42
+    restart: unless-stopped
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - gardiyan_network
+    ports:
+      - "16686:16686"    # HTTP query     frontend UI
+      - "6831:6831/udp"  # UDP  agent     accept jaeger.thrift over Thrift-compact protocol (used by most SDKs)
+      - "4317:4317"      # HTTP collector accept OpenTelemetry Protocol (OTLP) over gRPC
+      - "4318:4318"      # HTTP collector accept OpenTelemetry Protocol (OTLP) over HTTP
+      - "14268:14268"    # HTTP collector accept jaeger.thrift
+
+  ui:
+    image: target/strelka-ui:latest
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      - DATABASE_HOST=postgresdb
+      - DATABASE_NAME=strelka_ui
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_USERNAME=postgres
+      - STRELKA_HOST=frontend
+      #- VIRUSTOTAL_API_KEY=<VirusTotal_API_Key>                              # Required if using VirusTotal Key
+      #- VIRUSTOTAL_API_LIMIT=50                                              # Required if using VirusTotal Key
+      #- REQUESTS_CA_BUNDLE=/etc/ssl/certs/cacerts.pem                        # Required if using VirusTotal Key
+    #volumes:
+      #- /path/to/my/custom/cacerts.pem:/etc/ssl/certs/cacerts.pem:ro  # Required if using VirusTotal Key
+    networks:
+      - gardiyan_network
+    ports:
+      - "9980:8080"
+    depends_on:
+      - postgresdb
+
+  postgresdb:
+    image: docker.io/bitnami/postgresql:11
+    restart: unless-stopped
+    environment:
+      - POSTGRESQL_DATABASE=strelka_ui
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_USERNAME=postgres
+    networks:
+      - gardiyan_network
+    ports:
+      - "5433:5432"

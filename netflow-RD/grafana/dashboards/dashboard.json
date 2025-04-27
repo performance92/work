@@ -1,0 +1,2316 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 1,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "fixedColor": "semi-dark-orange",
+            "mode": "palette-classic-by-name"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "unit": "decmbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "number"
+            },
+            "properties": []
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 11,
+        "x": 0,
+        "y": 0
+      },
+      "id": 6,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Value",
+          "sortDesc": false,
+          "values": [
+            "percent",
+            "value"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes\" or r[\"_field\"] == \"proto\")  \r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")  \r\n  |> group(columns: [\"proto\"])  \r\n  |> sum(column: \"bytes\")  \r\n  |> rename(columns: {bytes: \"\"})  \r\n  |> sort(columns: [\"\"], desc: true)  \r\n  |> yield(name: \"top_app_traffic\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Application",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 13,
+        "x": 11,
+        "y": 0
+      },
+      "id": 10,
+      "options": {
+        "colorMode": "none",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "percentChangeColorMode": "same_as_value",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showPercentChange": true,
+        "textMode": "auto",
+        "wideLayout": true
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes\" or r[\"_field\"] == \"packets\" or r[\"_field\"] == \"flows\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: sum, createEmpty: false)\r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> map(fn: (r) => ({\r\n        _time: r._time,\r\n        bps: (float(v: r.bytes) * 8.0) / (float(v: int(v: v.windowPeriod)) / 1000000000.0),\r\n        pps: float(v: r.packets) / (float(v: int(v: v.windowPeriod)) / 1000000000.0),\r\n        fps: float(v: r.flows) / (float(v: int(v: v.windowPeriod)) / 1000000000.0)\r\n  }))\r\n  |> yield(name: \"all_traffic\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "All Traffic",
+      "type": "stat"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "unit": "decmbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "number"
+            },
+            "properties": []
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Source",
+                  "Source 1.1.1.1",
+                  "Source 10.100.10.1",
+                  "Source 10.100.10.101",
+                  "Source 10.100.10.108",
+                  "Source 10.100.10.12",
+                  "Source 10.100.10.121",
+                  "Source 10.100.10.13",
+                  "Source 10.100.10.132",
+                  "Source 10.100.10.14",
+                  "Source 10.100.10.160",
+                  "Source 10.100.10.29",
+                  "Source 10.100.10.35",
+                  "Source 10.100.10.37",
+                  "Source 10.100.10.39",
+                  "Source 10.100.10.55",
+                  "Source 10.100.10.57",
+                  "Source 10.100.10.60",
+                  "Source 10.100.10.63",
+                  "Source 10.100.10.73",
+                  "Source 10.100.10.74",
+                  "Source 10.100.10.77",
+                  "Source 10.100.10.79",
+                  "Source 10.100.10.88",
+                  "Source 10.100.10.92",
+                  "Source 10.100.11.118",
+                  "Source 10.100.11.128",
+                  "Source 10.100.11.158",
+                  "Source 10.100.11.184",
+                  "Source 10.100.11.191",
+                  "Source 10.100.11.194",
+                  "Source 10.100.11.197",
+                  "Source 10.100.11.198",
+                  "Source 10.100.11.200",
+                  "Source 10.100.11.203",
+                  "Source 10.100.11.205",
+                  "Source 10.100.11.207",
+                  "Source 10.100.11.208",
+                  "Source 10.100.11.212",
+                  "Source 10.100.11.213",
+                  "Source 10.100.11.214",
+                  "Source 10.100.11.215",
+                  "Source 10.100.11.219",
+                  "Source 10.100.11.221",
+                  "Source 10.100.11.222",
+                  "Source 10.100.11.223",
+                  "Source 10.100.11.224",
+                  "Source 10.100.11.229",
+                  "Source 10.100.11.231",
+                  "Source 10.100.11.237",
+                  "Source 10.100.11.238",
+                  "Source 10.100.11.240",
+                  "Source 10.100.11.241",
+                  "Source 10.100.11.245",
+                  "Source 10.100.11.246",
+                  "Source 10.100.11.250",
+                  "Source 10.100.11.251",
+                  "Source 10.100.11.252",
+                  "Source 10.100.11.35",
+                  "Source 10.100.11.60",
+                  "Source 10.100.11.61",
+                  "Source 10.100.11.62",
+                  "Source 10.100.11.63",
+                  "Source 10.100.11.64",
+                  "Source 10.100.11.69",
+                  "Source 10.100.11.73",
+                  "Source 10.100.11.75",
+                  "Source 10.100.11.82",
+                  "Source 10.16.23.13",
+                  "Source 10.16.23.14",
+                  "Source 10.16.23.21",
+                  "Source 10.50.10.12",
+                  "Source 10.50.10.15",
+                  "Source 104.16.100.215",
+                  "Source 104.16.101.215",
+                  "Source 104.16.97.215",
+                  "Source 104.16.98.215",
+                  "Source 104.16.99.215",
+                  "Source 104.18.37.251",
+                  "Source 104.21.48.1",
+                  "Source 104.247.162.163",
+                  "Source 140.82.121.33",
+                  "Source 140.82.121.34",
+                  "Source 141.30.62.23",
+                  "Source 142.250.187.123",
+                  "Source 142.250.75.251",
+                  "Source 142.251.141.59",
+                  "Source 150.171.10.39",
+                  "Source 151.101.0.215",
+                  "Source 151.101.130.132",
+                  "Source 151.101.130.49",
+                  "Source 151.101.194.132",
+                  "Source 151.101.194.49",
+                  "Source 151.101.2.132",
+                  "Source 151.101.2.49",
+                  "Source 151.101.38.172",
+                  "Source 151.101.66.49",
+                  "Source 172.16.18.1",
+                  "Source 172.16.18.101",
+                  "Source 172.16.18.29",
+                  "Source 172.16.18.30",
+                  "Source 172.16.18.32",
+                  "Source 172.16.18.33",
+                  "Source 172.16.18.34",
+                  "Source 172.16.18.35",
+                  "Source 172.16.18.38",
+                  "Source 172.16.18.41",
+                  "Source 172.16.18.42",
+                  "Source 172.16.18.43",
+                  "Source 172.16.18.47",
+                  "Source 172.16.18.49",
+                  "Source 172.16.18.54",
+                  "Source 172.16.18.55",
+                  "Source 172.16.18.56",
+                  "Source 172.16.18.57",
+                  "Source 172.16.18.60",
+                  "Source 172.16.18.63",
+                  "Source 172.16.18.73",
+                  "Source 172.16.18.74",
+                  "Source 172.16.18.75",
+                  "Source 172.16.18.76",
+                  "Source 172.16.20.1",
+                  "Source 172.16.20.100",
+                  "Source 172.16.20.110",
+                  "Source 172.16.20.141",
+                  "Source 172.16.20.152",
+                  "Source 172.16.20.182",
+                  "Source 172.16.20.191",
+                  "Source 172.16.20.2",
+                  "Source 172.16.20.224",
+                  "Source 172.16.20.228",
+                  "Source 172.16.20.234",
+                  "Source 172.16.20.236",
+                  "Source 172.16.20.237",
+                  "Source 172.16.20.238",
+                  "Source 172.16.20.243",
+                  "Source 172.16.20.244",
+                  "Source 172.16.20.247",
+                  "Source 172.16.20.3",
+                  "Source 172.16.20.42",
+                  "Source 172.16.20.44",
+                  "Source 172.16.20.5",
+                  "Source 172.16.20.51",
+                  "Source 172.16.20.6",
+                  "Source 172.16.20.60",
+                  "Source 172.16.20.66",
+                  "Source 172.16.20.7",
+                  "Source 172.16.20.74",
+                  "Source 172.16.20.76",
+                  "Source 172.16.20.8",
+                  "Source 172.16.20.89",
+                  "Source 172.16.21.10",
+                  "Source 172.16.21.101",
+                  "Source 172.16.21.104",
+                  "Source 172.16.21.105",
+                  "Source 172.16.21.11",
+                  "Source 172.16.21.112",
+                  "Source 172.16.21.114",
+                  "Source 172.16.21.12",
+                  "Source 172.16.21.120",
+                  "Source 172.16.21.14",
+                  "Source 172.16.21.140",
+                  "Source 172.16.21.149",
+                  "Source 172.16.21.155",
+                  "Source 172.16.21.16",
+                  "Source 172.16.21.160",
+                  "Source 172.16.21.176",
+                  "Source 172.16.21.186",
+                  "Source 172.16.21.190",
+                  "Source 172.16.21.191",
+                  "Source 172.16.21.192",
+                  "Source 172.16.21.193",
+                  "Source 172.16.21.194",
+                  "Source 172.16.21.200",
+                  "Source 172.16.21.201",
+                  "Source 172.16.21.204",
+                  "Source 172.16.21.210",
+                  "Source 172.16.21.213",
+                  "Source 172.16.21.215",
+                  "Source 172.16.21.219",
+                  "Source 172.16.21.220",
+                  "Source 172.16.21.222",
+                  "Source 172.16.21.229",
+                  "Source 172.16.21.230",
+                  "Source 172.16.21.233",
+                  "Source 172.16.21.239",
+                  "Source 172.16.21.240",
+                  "Source 172.16.21.241",
+                  "Source 172.16.21.243",
+                  "Source 172.16.21.248",
+                  "Source 172.16.21.25",
+                  "Source 172.16.21.250",
+                  "Source 172.16.21.251",
+                  "Source 172.16.21.254",
+                  "Source 172.16.21.29",
+                  "Source 172.16.21.31",
+                  "Source 172.16.21.38",
+                  "Source 172.16.21.40",
+                  "Source 172.16.21.52",
+                  "Source 172.16.21.54",
+                  "Source 172.16.21.56",
+                  "Source 172.16.21.60",
+                  "Source 172.16.21.62",
+                  "Source 172.16.21.64",
+                  "Source 172.16.21.66",
+                  "Source 172.16.21.68",
+                  "Source 172.16.21.69",
+                  "Source 172.16.21.7",
+                  "Source 172.16.21.72",
+                  "Source 172.16.21.8",
+                  "Source 172.16.21.80",
+                  "Source 172.16.21.81",
+                  "Source 172.16.21.86",
+                  "Source 172.16.21.92",
+                  "Source 172.16.21.94",
+                  "Source 172.16.21.97",
+                  "Source 172.16.23.102",
+                  "Source 172.16.23.20",
+                  "Source 172.16.23.240",
+                  "Source 172.16.23.27",
+                  "Source 172.16.23.3",
+                  "Source 172.16.23.31",
+                  "Source 172.16.23.5",
+                  "Source 172.16.23.9",
+                  "Source 172.16.30.54",
+                  "Source 172.16.30.56",
+                  "Source 172.16.6.140",
+                  "Source 172.16.6.155",
+                  "Source 172.16.6.156",
+                  "Source 172.16.6.170",
+                  "Source 172.16.6.177",
+                  "Source 172.16.6.245",
+                  "Source 172.16.6.246",
+                  "Source 172.16.6.247",
+                  "Source 172.16.6.249",
+                  "Source 172.16.6.253",
+                  "Source 172.16.6.6",
+                  "Source 172.16.6.8",
+                  "Source 172.19.0.20",
+                  "Source 172.217.169.219",
+                  "Source 172.67.174.52",
+                  "Source 176.236.125.60",
+                  "Source 18.198.0.192",
+                  "Source 18.244.179.103",
+                  "Source 18.245.31.83",
+                  "Source 18.66.102.127",
+                  "Source 185.125.190.40",
+                  "Source 185.125.190.81",
+                  "Source 185.125.190.82",
+                  "Source 185.125.190.83",
+                  "Source 185.189.182.234",
+                  "Source 193.140.63.118",
+                  "Source 195.175.180.217",
+                  "Source 195.175.182.82",
+                  "Source 195.33.200.18",
+                  "Source 195.33.200.19",
+                  "Source 195.33.200.26",
+                  "Source 199.232.210.172",
+                  "Source 199.232.214.172",
+                  "Source 2.16.10.166",
+                  "Source 2.18.79.139",
+                  "Source 2.18.79.143",
+                  "Source 2.20.73.80",
+                  "Source 2.20.92.125",
+                  "Source 2.22.89.20",
+                  "Source 2.22.89.35",
+                  "Source 20.190.147.1",
+                  "Source 20.42.73.30",
+                  "Source 216.58.212.27",
+                  "Source 216.58.214.187",
+                  "Source 23.207.210.154",
+                  "Source 23.32.101.128",
+                  "Source 23.33.90.104",
+                  "Source 3.127.172.245",
+                  "Source 3.160.57.45",
+                  "Source 34.149.100.209",
+                  "Source 34.95.113.255",
+                  "Source 52.113.194.132",
+                  "Source 52.123.135.185",
+                  "Source 52.165.164.15",
+                  "Source 52.167.160.173",
+                  "Source 77.81.186.67",
+                  "Source 77.81.186.68",
+                  "Source 77.81.186.69",
+                  "Source 8.8.4.4",
+                  "Source 8.8.8.8",
+                  "Source 82.98.66.230",
+                  "Source 85.199.214.98",
+                  "Source 91.189.91.48",
+                  "Source 91.189.91.82",
+                  "Source 91.189.91.83",
+                  "Source 92.123.45.190",
+                  "Source 95.101.180.27",
+                  "Source 98.85.153.80",
+                  "Source fe80::2413:2d35:8f79:f53c",
+                  "Source fe80::3b9:4aec:a73f:bb85",
+                  "Source fe80::466:85b:b70e:f5c6",
+                  "Source fe80::49ee:d289:e952:12c0",
+                  "Source fe80::fe03:9fff:fef1:711a",
+                  "172.16.18.63",
+                  "172.16.20.1",
+                  "156.146.52.30",
+                  "172.16.20.141",
+                  "10.100.10.23",
+                  "10.100.11.194",
+                  "172.16.18.54",
+                  "172.16.18.60",
+                  "172.16.18.101",
+                  "10.100.10.60",
+                  "10.100.10.14",
+                  "10.100.10.74",
+                  "140.82.121.34"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 11,
+        "x": 0,
+        "y": 10
+      },
+      "id": 5,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Value",
+          "sortDesc": false,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes\" or r[\"_field\"] == \"src_addr\")  \r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")  \r\n  |> group(columns: [\"src_addr\"])  \r\n  |> sum(column: \"bytes\")  \r\n  |> rename(columns: {bytes: \"\"})  \r\n  |> sort(columns: [\"\"], desc: true)  \r\n  |> yield(name: \"top_traffic_sources\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Source (Host)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisGridShow": true,
+            "axisLabel": "",
+            "axisPlacement": "left",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 64,
+            "gradientMode": "opacity",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 1,
+            "scaleDistribution": {
+              "linearThreshold": 1000,
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 13,
+        "x": 11,
+        "y": 10
+      },
+      "id": 3,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"packets\" or r[\"_field\"] == \"bytes\" or r[\"_field\"] == \"icmp_code\")\r\n  |> unique()\r\n  |> yield(name: \"unique\")\r\n\r\nfrom(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"packets\" or r[\"_field\"] == \"bytes\" or r[\"_field\"] == \"icmp_code\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")\r\n\r\nfrom(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"packets\" or r[\"_field\"] == \"bytes\" or r[\"_field\"] == \"icmp_code\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: first, createEmpty: false)\r\n  |> yield(name: \"first\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Bytes - Packet",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "unit": "decmbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "number"
+            },
+            "properties": []
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Source",
+                  "Source 1.1.1.1",
+                  "Source 10.100.10.1",
+                  "Source 10.100.10.101",
+                  "Source 10.100.10.108",
+                  "Source 10.100.10.12",
+                  "Source 10.100.10.121",
+                  "Source 10.100.10.13",
+                  "Source 10.100.10.132",
+                  "Source 10.100.10.14",
+                  "Source 10.100.10.160",
+                  "Source 10.100.10.29",
+                  "Source 10.100.10.35",
+                  "Source 10.100.10.37",
+                  "Source 10.100.10.39",
+                  "Source 10.100.10.55",
+                  "Source 10.100.10.57",
+                  "Source 10.100.10.60",
+                  "Source 10.100.10.63",
+                  "Source 10.100.10.73",
+                  "Source 10.100.10.74",
+                  "Source 10.100.10.77",
+                  "Source 10.100.10.79",
+                  "Source 10.100.10.88",
+                  "Source 10.100.10.92",
+                  "Source 10.100.11.118",
+                  "Source 10.100.11.128",
+                  "Source 10.100.11.158",
+                  "Source 10.100.11.184",
+                  "Source 10.100.11.191",
+                  "Source 10.100.11.194",
+                  "Source 10.100.11.197",
+                  "Source 10.100.11.198",
+                  "Source 10.100.11.200",
+                  "Source 10.100.11.203",
+                  "Source 10.100.11.205",
+                  "Source 10.100.11.207",
+                  "Source 10.100.11.208",
+                  "Source 10.100.11.212",
+                  "Source 10.100.11.213",
+                  "Source 10.100.11.214",
+                  "Source 10.100.11.215",
+                  "Source 10.100.11.219",
+                  "Source 10.100.11.221",
+                  "Source 10.100.11.222",
+                  "Source 10.100.11.223",
+                  "Source 10.100.11.224",
+                  "Source 10.100.11.229",
+                  "Source 10.100.11.231",
+                  "Source 10.100.11.237",
+                  "Source 10.100.11.238",
+                  "Source 10.100.11.240",
+                  "Source 10.100.11.241",
+                  "Source 10.100.11.245",
+                  "Source 10.100.11.246",
+                  "Source 10.100.11.250",
+                  "Source 10.100.11.251",
+                  "Source 10.100.11.252",
+                  "Source 10.100.11.35",
+                  "Source 10.100.11.60",
+                  "Source 10.100.11.61",
+                  "Source 10.100.11.62",
+                  "Source 10.100.11.63",
+                  "Source 10.100.11.64",
+                  "Source 10.100.11.69",
+                  "Source 10.100.11.73",
+                  "Source 10.100.11.75",
+                  "Source 10.100.11.82",
+                  "Source 10.16.23.13",
+                  "Source 10.16.23.14",
+                  "Source 10.16.23.21",
+                  "Source 10.50.10.12",
+                  "Source 10.50.10.15",
+                  "Source 104.16.100.215",
+                  "Source 104.16.101.215",
+                  "Source 104.16.97.215",
+                  "Source 104.16.98.215",
+                  "Source 104.16.99.215",
+                  "Source 104.18.37.251",
+                  "Source 104.21.48.1",
+                  "Source 104.247.162.163",
+                  "Source 140.82.121.33",
+                  "Source 140.82.121.34",
+                  "Source 141.30.62.23",
+                  "Source 142.250.187.123",
+                  "Source 142.250.75.251",
+                  "Source 142.251.141.59",
+                  "Source 150.171.10.39",
+                  "Source 151.101.0.215",
+                  "Source 151.101.130.132",
+                  "Source 151.101.130.49",
+                  "Source 151.101.194.132",
+                  "Source 151.101.194.49",
+                  "Source 151.101.2.132",
+                  "Source 151.101.2.49",
+                  "Source 151.101.38.172",
+                  "Source 151.101.66.49",
+                  "Source 172.16.18.1",
+                  "Source 172.16.18.101",
+                  "Source 172.16.18.29",
+                  "Source 172.16.18.30",
+                  "Source 172.16.18.32",
+                  "Source 172.16.18.33",
+                  "Source 172.16.18.34",
+                  "Source 172.16.18.35",
+                  "Source 172.16.18.38",
+                  "Source 172.16.18.41",
+                  "Source 172.16.18.42",
+                  "Source 172.16.18.43",
+                  "Source 172.16.18.47",
+                  "Source 172.16.18.49",
+                  "Source 172.16.18.54",
+                  "Source 172.16.18.55",
+                  "Source 172.16.18.56",
+                  "Source 172.16.18.57",
+                  "Source 172.16.18.60",
+                  "Source 172.16.18.63",
+                  "Source 172.16.18.73",
+                  "Source 172.16.18.74",
+                  "Source 172.16.18.75",
+                  "Source 172.16.18.76",
+                  "Source 172.16.20.1",
+                  "Source 172.16.20.100",
+                  "Source 172.16.20.110",
+                  "Source 172.16.20.141",
+                  "Source 172.16.20.152",
+                  "Source 172.16.20.182",
+                  "Source 172.16.20.191",
+                  "Source 172.16.20.2",
+                  "Source 172.16.20.224",
+                  "Source 172.16.20.228",
+                  "Source 172.16.20.234",
+                  "Source 172.16.20.236",
+                  "Source 172.16.20.237",
+                  "Source 172.16.20.238",
+                  "Source 172.16.20.243",
+                  "Source 172.16.20.244",
+                  "Source 172.16.20.247",
+                  "Source 172.16.20.3",
+                  "Source 172.16.20.42",
+                  "Source 172.16.20.44",
+                  "Source 172.16.20.5",
+                  "Source 172.16.20.51",
+                  "Source 172.16.20.6",
+                  "Source 172.16.20.60",
+                  "Source 172.16.20.66",
+                  "Source 172.16.20.7",
+                  "Source 172.16.20.74",
+                  "Source 172.16.20.76",
+                  "Source 172.16.20.8",
+                  "Source 172.16.20.89",
+                  "Source 172.16.21.10",
+                  "Source 172.16.21.101",
+                  "Source 172.16.21.104",
+                  "Source 172.16.21.105",
+                  "Source 172.16.21.11",
+                  "Source 172.16.21.112",
+                  "Source 172.16.21.114",
+                  "Source 172.16.21.12",
+                  "Source 172.16.21.120",
+                  "Source 172.16.21.14",
+                  "Source 172.16.21.140",
+                  "Source 172.16.21.149",
+                  "Source 172.16.21.155",
+                  "Source 172.16.21.16",
+                  "Source 172.16.21.160",
+                  "Source 172.16.21.176",
+                  "Source 172.16.21.186",
+                  "Source 172.16.21.190",
+                  "Source 172.16.21.191",
+                  "Source 172.16.21.192",
+                  "Source 172.16.21.193",
+                  "Source 172.16.21.194",
+                  "Source 172.16.21.200",
+                  "Source 172.16.21.201",
+                  "Source 172.16.21.204",
+                  "Source 172.16.21.210",
+                  "Source 172.16.21.213",
+                  "Source 172.16.21.215",
+                  "Source 172.16.21.219",
+                  "Source 172.16.21.220",
+                  "Source 172.16.21.222",
+                  "Source 172.16.21.229",
+                  "Source 172.16.21.230",
+                  "Source 172.16.21.233",
+                  "Source 172.16.21.239",
+                  "Source 172.16.21.240",
+                  "Source 172.16.21.241",
+                  "Source 172.16.21.243",
+                  "Source 172.16.21.248",
+                  "Source 172.16.21.25",
+                  "Source 172.16.21.250",
+                  "Source 172.16.21.251",
+                  "Source 172.16.21.254",
+                  "Source 172.16.21.29",
+                  "Source 172.16.21.31",
+                  "Source 172.16.21.38",
+                  "Source 172.16.21.40",
+                  "Source 172.16.21.52",
+                  "Source 172.16.21.54",
+                  "Source 172.16.21.56",
+                  "Source 172.16.21.60",
+                  "Source 172.16.21.62",
+                  "Source 172.16.21.64",
+                  "Source 172.16.21.66",
+                  "Source 172.16.21.68",
+                  "Source 172.16.21.69",
+                  "Source 172.16.21.7",
+                  "Source 172.16.21.72",
+                  "Source 172.16.21.8",
+                  "Source 172.16.21.80",
+                  "Source 172.16.21.81",
+                  "Source 172.16.21.86",
+                  "Source 172.16.21.92",
+                  "Source 172.16.21.94",
+                  "Source 172.16.21.97",
+                  "Source 172.16.23.102",
+                  "Source 172.16.23.20",
+                  "Source 172.16.23.240",
+                  "Source 172.16.23.27",
+                  "Source 172.16.23.3",
+                  "Source 172.16.23.31",
+                  "Source 172.16.23.5",
+                  "Source 172.16.23.9",
+                  "Source 172.16.30.54",
+                  "Source 172.16.30.56",
+                  "Source 172.16.6.140",
+                  "Source 172.16.6.155",
+                  "Source 172.16.6.156",
+                  "Source 172.16.6.170",
+                  "Source 172.16.6.177",
+                  "Source 172.16.6.245",
+                  "Source 172.16.6.246",
+                  "Source 172.16.6.247",
+                  "Source 172.16.6.249",
+                  "Source 172.16.6.253",
+                  "Source 172.16.6.6",
+                  "Source 172.16.6.8",
+                  "Source 172.19.0.20",
+                  "Source 172.217.169.219",
+                  "Source 172.67.174.52",
+                  "Source 176.236.125.60",
+                  "Source 18.198.0.192",
+                  "Source 18.244.179.103",
+                  "Source 18.245.31.83",
+                  "Source 18.66.102.127",
+                  "Source 185.125.190.40",
+                  "Source 185.125.190.81",
+                  "Source 185.125.190.82",
+                  "Source 185.125.190.83",
+                  "Source 185.189.182.234",
+                  "Source 193.140.63.118",
+                  "Source 195.175.180.217",
+                  "Source 195.175.182.82",
+                  "Source 195.33.200.18",
+                  "Source 195.33.200.19",
+                  "Source 195.33.200.26",
+                  "Source 199.232.210.172",
+                  "Source 199.232.214.172",
+                  "Source 2.16.10.166",
+                  "Source 2.18.79.139",
+                  "Source 2.18.79.143",
+                  "Source 2.20.73.80",
+                  "Source 2.20.92.125",
+                  "Source 2.22.89.20",
+                  "Source 2.22.89.35",
+                  "Source 20.190.147.1",
+                  "Source 20.42.73.30",
+                  "Source 216.58.212.27",
+                  "Source 216.58.214.187",
+                  "Source 23.207.210.154",
+                  "Source 23.32.101.128",
+                  "Source 23.33.90.104",
+                  "Source 3.127.172.245",
+                  "Source 3.160.57.45",
+                  "Source 34.149.100.209",
+                  "Source 34.95.113.255",
+                  "Source 52.113.194.132",
+                  "Source 52.123.135.185",
+                  "Source 52.165.164.15",
+                  "Source 52.167.160.173",
+                  "Source 77.81.186.67",
+                  "Source 77.81.186.68",
+                  "Source 77.81.186.69",
+                  "Source 8.8.4.4",
+                  "Source 8.8.8.8",
+                  "Source 82.98.66.230",
+                  "Source 85.199.214.98",
+                  "Source 91.189.91.48",
+                  "Source 91.189.91.82",
+                  "Source 91.189.91.83",
+                  "Source 92.123.45.190",
+                  "Source 95.101.180.27",
+                  "Source 98.85.153.80",
+                  "Source fe80::2413:2d35:8f79:f53c",
+                  "Source fe80::3b9:4aec:a73f:bb85",
+                  "Source fe80::466:85b:b70e:f5c6",
+                  "Source fe80::49ee:d289:e952:12c0",
+                  "Source fe80::fe03:9fff:fef1:711a",
+                  "172.16.18.63",
+                  "172.16.20.1",
+                  "156.146.52.30",
+                  "172.16.20.141",
+                  "10.100.10.23",
+                  "10.100.11.194",
+                  "172.16.18.54",
+                  "172.16.18.60",
+                  "172.16.18.101",
+                  "10.100.10.60",
+                  "10.100.10.14",
+                  "10.100.10.74",
+                  "140.82.121.34",
+                  "443",
+                  "11127",
+                  "3000",
+                  "8085",
+                  "80",
+                  "53",
+                  "161",
+                  "0",
+                  "43234",
+                  "1514",
+                  "47556",
+                  "37934",
+                  "52670",
+                  "39234",
+                  "Port: 0",
+                  "Port: 9000",
+                  "Port: 52670",
+                  "Port: 39234",
+                  "Port: 5432",
+                  "Port: 3389",
+                  "Port: 39063",
+                  "Port: 37640",
+                  "Port: 54131"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 11,
+        "x": 0,
+        "y": 19
+      },
+      "id": 8,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Value",
+          "sortDesc": false,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes\" or r[\"_field\"] == \"src_port\")  \r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")  \r\n  |> group(columns: [\"src_port\"])  \r\n  |> sum(column: \"bytes\")  \r\n  |> rename(columns: {bytes: \"Port:\"})  \r\n  |> sort(columns: [\"total_bytes\"], desc: true)  \r\n  |> limit(n: 10)  \r\n  |> yield(name: \"top_source_ports\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Source (PORT)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "unit": "decmbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "number"
+            },
+            "properties": []
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Source",
+                  "Source 1.1.1.1",
+                  "Source 10.100.10.1",
+                  "Source 10.100.10.101",
+                  "Source 10.100.10.108",
+                  "Source 10.100.10.12",
+                  "Source 10.100.10.121",
+                  "Source 10.100.10.13",
+                  "Source 10.100.10.132",
+                  "Source 10.100.10.14",
+                  "Source 10.100.10.160",
+                  "Source 10.100.10.29",
+                  "Source 10.100.10.35",
+                  "Source 10.100.10.37",
+                  "Source 10.100.10.39",
+                  "Source 10.100.10.55",
+                  "Source 10.100.10.57",
+                  "Source 10.100.10.60",
+                  "Source 10.100.10.63",
+                  "Source 10.100.10.73",
+                  "Source 10.100.10.74",
+                  "Source 10.100.10.77",
+                  "Source 10.100.10.79",
+                  "Source 10.100.10.88",
+                  "Source 10.100.10.92",
+                  "Source 10.100.11.118",
+                  "Source 10.100.11.128",
+                  "Source 10.100.11.158",
+                  "Source 10.100.11.184",
+                  "Source 10.100.11.191",
+                  "Source 10.100.11.194",
+                  "Source 10.100.11.197",
+                  "Source 10.100.11.198",
+                  "Source 10.100.11.200",
+                  "Source 10.100.11.203",
+                  "Source 10.100.11.205",
+                  "Source 10.100.11.207",
+                  "Source 10.100.11.208",
+                  "Source 10.100.11.212",
+                  "Source 10.100.11.213",
+                  "Source 10.100.11.214",
+                  "Source 10.100.11.215",
+                  "Source 10.100.11.219",
+                  "Source 10.100.11.221",
+                  "Source 10.100.11.222",
+                  "Source 10.100.11.223",
+                  "Source 10.100.11.224",
+                  "Source 10.100.11.229",
+                  "Source 10.100.11.231",
+                  "Source 10.100.11.237",
+                  "Source 10.100.11.238",
+                  "Source 10.100.11.240",
+                  "Source 10.100.11.241",
+                  "Source 10.100.11.245",
+                  "Source 10.100.11.246",
+                  "Source 10.100.11.250",
+                  "Source 10.100.11.251",
+                  "Source 10.100.11.252",
+                  "Source 10.100.11.35",
+                  "Source 10.100.11.60",
+                  "Source 10.100.11.61",
+                  "Source 10.100.11.62",
+                  "Source 10.100.11.63",
+                  "Source 10.100.11.64",
+                  "Source 10.100.11.69",
+                  "Source 10.100.11.73",
+                  "Source 10.100.11.75",
+                  "Source 10.100.11.82",
+                  "Source 10.16.23.13",
+                  "Source 10.16.23.14",
+                  "Source 10.16.23.21",
+                  "Source 10.50.10.12",
+                  "Source 10.50.10.15",
+                  "Source 104.16.100.215",
+                  "Source 104.16.101.215",
+                  "Source 104.16.97.215",
+                  "Source 104.16.98.215",
+                  "Source 104.16.99.215",
+                  "Source 104.18.37.251",
+                  "Source 104.21.48.1",
+                  "Source 104.247.162.163",
+                  "Source 140.82.121.33",
+                  "Source 140.82.121.34",
+                  "Source 141.30.62.23",
+                  "Source 142.250.187.123",
+                  "Source 142.250.75.251",
+                  "Source 142.251.141.59",
+                  "Source 150.171.10.39",
+                  "Source 151.101.0.215",
+                  "Source 151.101.130.132",
+                  "Source 151.101.130.49",
+                  "Source 151.101.194.132",
+                  "Source 151.101.194.49",
+                  "Source 151.101.2.132",
+                  "Source 151.101.2.49",
+                  "Source 151.101.38.172",
+                  "Source 151.101.66.49",
+                  "Source 172.16.18.1",
+                  "Source 172.16.18.101",
+                  "Source 172.16.18.29",
+                  "Source 172.16.18.30",
+                  "Source 172.16.18.32",
+                  "Source 172.16.18.33",
+                  "Source 172.16.18.34",
+                  "Source 172.16.18.35",
+                  "Source 172.16.18.38",
+                  "Source 172.16.18.41",
+                  "Source 172.16.18.42",
+                  "Source 172.16.18.43",
+                  "Source 172.16.18.47",
+                  "Source 172.16.18.49",
+                  "Source 172.16.18.54",
+                  "Source 172.16.18.55",
+                  "Source 172.16.18.56",
+                  "Source 172.16.18.57",
+                  "Source 172.16.18.60",
+                  "Source 172.16.18.63",
+                  "Source 172.16.18.73",
+                  "Source 172.16.18.74",
+                  "Source 172.16.18.75",
+                  "Source 172.16.18.76",
+                  "Source 172.16.20.1",
+                  "Source 172.16.20.100",
+                  "Source 172.16.20.110",
+                  "Source 172.16.20.141",
+                  "Source 172.16.20.152",
+                  "Source 172.16.20.182",
+                  "Source 172.16.20.191",
+                  "Source 172.16.20.2",
+                  "Source 172.16.20.224",
+                  "Source 172.16.20.228",
+                  "Source 172.16.20.234",
+                  "Source 172.16.20.236",
+                  "Source 172.16.20.237",
+                  "Source 172.16.20.238",
+                  "Source 172.16.20.243",
+                  "Source 172.16.20.244",
+                  "Source 172.16.20.247",
+                  "Source 172.16.20.3",
+                  "Source 172.16.20.42",
+                  "Source 172.16.20.44",
+                  "Source 172.16.20.5",
+                  "Source 172.16.20.51",
+                  "Source 172.16.20.6",
+                  "Source 172.16.20.60",
+                  "Source 172.16.20.66",
+                  "Source 172.16.20.7",
+                  "Source 172.16.20.74",
+                  "Source 172.16.20.76",
+                  "Source 172.16.20.8",
+                  "Source 172.16.20.89",
+                  "Source 172.16.21.10",
+                  "Source 172.16.21.101",
+                  "Source 172.16.21.104",
+                  "Source 172.16.21.105",
+                  "Source 172.16.21.11",
+                  "Source 172.16.21.112",
+                  "Source 172.16.21.114",
+                  "Source 172.16.21.12",
+                  "Source 172.16.21.120",
+                  "Source 172.16.21.14",
+                  "Source 172.16.21.140",
+                  "Source 172.16.21.149",
+                  "Source 172.16.21.155",
+                  "Source 172.16.21.16",
+                  "Source 172.16.21.160",
+                  "Source 172.16.21.176",
+                  "Source 172.16.21.186",
+                  "Source 172.16.21.190",
+                  "Source 172.16.21.191",
+                  "Source 172.16.21.192",
+                  "Source 172.16.21.193",
+                  "Source 172.16.21.194",
+                  "Source 172.16.21.200",
+                  "Source 172.16.21.201",
+                  "Source 172.16.21.204",
+                  "Source 172.16.21.210",
+                  "Source 172.16.21.213",
+                  "Source 172.16.21.215",
+                  "Source 172.16.21.219",
+                  "Source 172.16.21.220",
+                  "Source 172.16.21.222",
+                  "Source 172.16.21.229",
+                  "Source 172.16.21.230",
+                  "Source 172.16.21.233",
+                  "Source 172.16.21.239",
+                  "Source 172.16.21.240",
+                  "Source 172.16.21.241",
+                  "Source 172.16.21.243",
+                  "Source 172.16.21.248",
+                  "Source 172.16.21.25",
+                  "Source 172.16.21.250",
+                  "Source 172.16.21.251",
+                  "Source 172.16.21.254",
+                  "Source 172.16.21.29",
+                  "Source 172.16.21.31",
+                  "Source 172.16.21.38",
+                  "Source 172.16.21.40",
+                  "Source 172.16.21.52",
+                  "Source 172.16.21.54",
+                  "Source 172.16.21.56",
+                  "Source 172.16.21.60",
+                  "Source 172.16.21.62",
+                  "Source 172.16.21.64",
+                  "Source 172.16.21.66",
+                  "Source 172.16.21.68",
+                  "Source 172.16.21.69",
+                  "Source 172.16.21.7",
+                  "Source 172.16.21.72",
+                  "Source 172.16.21.8",
+                  "Source 172.16.21.80",
+                  "Source 172.16.21.81",
+                  "Source 172.16.21.86",
+                  "Source 172.16.21.92",
+                  "Source 172.16.21.94",
+                  "Source 172.16.21.97",
+                  "Source 172.16.23.102",
+                  "Source 172.16.23.20",
+                  "Source 172.16.23.240",
+                  "Source 172.16.23.27",
+                  "Source 172.16.23.3",
+                  "Source 172.16.23.31",
+                  "Source 172.16.23.5",
+                  "Source 172.16.23.9",
+                  "Source 172.16.30.54",
+                  "Source 172.16.30.56",
+                  "Source 172.16.6.140",
+                  "Source 172.16.6.155",
+                  "Source 172.16.6.156",
+                  "Source 172.16.6.170",
+                  "Source 172.16.6.177",
+                  "Source 172.16.6.245",
+                  "Source 172.16.6.246",
+                  "Source 172.16.6.247",
+                  "Source 172.16.6.249",
+                  "Source 172.16.6.253",
+                  "Source 172.16.6.6",
+                  "Source 172.16.6.8",
+                  "Source 172.19.0.20",
+                  "Source 172.217.169.219",
+                  "Source 172.67.174.52",
+                  "Source 176.236.125.60",
+                  "Source 18.198.0.192",
+                  "Source 18.244.179.103",
+                  "Source 18.245.31.83",
+                  "Source 18.66.102.127",
+                  "Source 185.125.190.40",
+                  "Source 185.125.190.81",
+                  "Source 185.125.190.82",
+                  "Source 185.125.190.83",
+                  "Source 185.189.182.234",
+                  "Source 193.140.63.118",
+                  "Source 195.175.180.217",
+                  "Source 195.175.182.82",
+                  "Source 195.33.200.18",
+                  "Source 195.33.200.19",
+                  "Source 195.33.200.26",
+                  "Source 199.232.210.172",
+                  "Source 199.232.214.172",
+                  "Source 2.16.10.166",
+                  "Source 2.18.79.139",
+                  "Source 2.18.79.143",
+                  "Source 2.20.73.80",
+                  "Source 2.20.92.125",
+                  "Source 2.22.89.20",
+                  "Source 2.22.89.35",
+                  "Source 20.190.147.1",
+                  "Source 20.42.73.30",
+                  "Source 216.58.212.27",
+                  "Source 216.58.214.187",
+                  "Source 23.207.210.154",
+                  "Source 23.32.101.128",
+                  "Source 23.33.90.104",
+                  "Source 3.127.172.245",
+                  "Source 3.160.57.45",
+                  "Source 34.149.100.209",
+                  "Source 34.95.113.255",
+                  "Source 52.113.194.132",
+                  "Source 52.123.135.185",
+                  "Source 52.165.164.15",
+                  "Source 52.167.160.173",
+                  "Source 77.81.186.67",
+                  "Source 77.81.186.68",
+                  "Source 77.81.186.69",
+                  "Source 8.8.4.4",
+                  "Source 8.8.8.8",
+                  "Source 82.98.66.230",
+                  "Source 85.199.214.98",
+                  "Source 91.189.91.48",
+                  "Source 91.189.91.82",
+                  "Source 91.189.91.83",
+                  "Source 92.123.45.190",
+                  "Source 95.101.180.27",
+                  "Source 98.85.153.80",
+                  "Source fe80::2413:2d35:8f79:f53c",
+                  "Source fe80::3b9:4aec:a73f:bb85",
+                  "Source fe80::466:85b:b70e:f5c6",
+                  "Source fe80::49ee:d289:e952:12c0",
+                  "Source fe80::fe03:9fff:fef1:711a",
+                  "172.16.18.63",
+                  "172.16.20.1",
+                  "156.146.52.30",
+                  "172.16.20.141",
+                  "10.100.10.23",
+                  "10.100.11.194",
+                  "172.16.18.54",
+                  "172.16.18.60",
+                  "172.16.18.101",
+                  "10.100.10.60",
+                  "10.100.10.14",
+                  "10.100.10.74",
+                  "140.82.121.34",
+                  "total_bytes 10.100.11.207",
+                  "total_bytes 10.100.10.121",
+                  "total_bytes 10.100.11.219",
+                  "total_bytes 140.82.121.34",
+                  "total_bytes 172.16.18.60",
+                  "total_bytes 10.100.10.74",
+                  "total_bytes",
+                  "total_bytes 10.100.11.229"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 13,
+        "x": 11,
+        "y": 20
+      },
+      "id": 7,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Value",
+          "sortDesc": false,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes\" or r[\"_field\"] == \"dst_addr\")  \r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")  \r\n  |> group(columns: [\"dst_addr\"])  \r\n  |> sum(column: \"bytes\")  \r\n  |> rename(columns: {bytes: \"\"})  \r\n  |> sort(columns: [\"\"], desc: true)  \r\n  |> limit(n: 10)  \r\n  |> yield(name: \"top_destination_traffic\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Destination (HOST)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": true,
+            "axisCenteredZero": false,
+            "axisColorMode": "series",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.5,
+            "drawStyle": "line",
+            "fillOpacity": 28,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineStyle": {
+              "fill": "solid"
+            },
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "log": 2,
+              "type": "log"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "normal"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 10,
+        "w": 11,
+        "x": 0,
+        "y": 28
+      },
+      "id": 2,
+      "options": {
+        "legend": {
+          "calcs": [
+            "last",
+            "firstNotNull"
+          ],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"in_if\" or r[\"_field\"] == \"out_if\" or r[\"_field\"] == \"bytes\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Interfaces",
+      "type": "timeseries"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            }
+          },
+          "fieldMinMax": false,
+          "mappings": [],
+          "unit": "decmbytes"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byType",
+              "options": "number"
+            },
+            "properties": []
+          },
+          {
+            "__systemRef": "hideSeriesFrom",
+            "matcher": {
+              "id": "byNames",
+              "options": {
+                "mode": "exclude",
+                "names": [
+                  "Source",
+                  "Source 1.1.1.1",
+                  "Source 10.100.10.1",
+                  "Source 10.100.10.101",
+                  "Source 10.100.10.108",
+                  "Source 10.100.10.12",
+                  "Source 10.100.10.121",
+                  "Source 10.100.10.13",
+                  "Source 10.100.10.132",
+                  "Source 10.100.10.14",
+                  "Source 10.100.10.160",
+                  "Source 10.100.10.29",
+                  "Source 10.100.10.35",
+                  "Source 10.100.10.37",
+                  "Source 10.100.10.39",
+                  "Source 10.100.10.55",
+                  "Source 10.100.10.57",
+                  "Source 10.100.10.60",
+                  "Source 10.100.10.63",
+                  "Source 10.100.10.73",
+                  "Source 10.100.10.74",
+                  "Source 10.100.10.77",
+                  "Source 10.100.10.79",
+                  "Source 10.100.10.88",
+                  "Source 10.100.10.92",
+                  "Source 10.100.11.118",
+                  "Source 10.100.11.128",
+                  "Source 10.100.11.158",
+                  "Source 10.100.11.184",
+                  "Source 10.100.11.191",
+                  "Source 10.100.11.194",
+                  "Source 10.100.11.197",
+                  "Source 10.100.11.198",
+                  "Source 10.100.11.200",
+                  "Source 10.100.11.203",
+                  "Source 10.100.11.205",
+                  "Source 10.100.11.207",
+                  "Source 10.100.11.208",
+                  "Source 10.100.11.212",
+                  "Source 10.100.11.213",
+                  "Source 10.100.11.214",
+                  "Source 10.100.11.215",
+                  "Source 10.100.11.219",
+                  "Source 10.100.11.221",
+                  "Source 10.100.11.222",
+                  "Source 10.100.11.223",
+                  "Source 10.100.11.224",
+                  "Source 10.100.11.229",
+                  "Source 10.100.11.231",
+                  "Source 10.100.11.237",
+                  "Source 10.100.11.238",
+                  "Source 10.100.11.240",
+                  "Source 10.100.11.241",
+                  "Source 10.100.11.245",
+                  "Source 10.100.11.246",
+                  "Source 10.100.11.250",
+                  "Source 10.100.11.251",
+                  "Source 10.100.11.252",
+                  "Source 10.100.11.35",
+                  "Source 10.100.11.60",
+                  "Source 10.100.11.61",
+                  "Source 10.100.11.62",
+                  "Source 10.100.11.63",
+                  "Source 10.100.11.64",
+                  "Source 10.100.11.69",
+                  "Source 10.100.11.73",
+                  "Source 10.100.11.75",
+                  "Source 10.100.11.82",
+                  "Source 10.16.23.13",
+                  "Source 10.16.23.14",
+                  "Source 10.16.23.21",
+                  "Source 10.50.10.12",
+                  "Source 10.50.10.15",
+                  "Source 104.16.100.215",
+                  "Source 104.16.101.215",
+                  "Source 104.16.97.215",
+                  "Source 104.16.98.215",
+                  "Source 104.16.99.215",
+                  "Source 104.18.37.251",
+                  "Source 104.21.48.1",
+                  "Source 104.247.162.163",
+                  "Source 140.82.121.33",
+                  "Source 140.82.121.34",
+                  "Source 141.30.62.23",
+                  "Source 142.250.187.123",
+                  "Source 142.250.75.251",
+                  "Source 142.251.141.59",
+                  "Source 150.171.10.39",
+                  "Source 151.101.0.215",
+                  "Source 151.101.130.132",
+                  "Source 151.101.130.49",
+                  "Source 151.101.194.132",
+                  "Source 151.101.194.49",
+                  "Source 151.101.2.132",
+                  "Source 151.101.2.49",
+                  "Source 151.101.38.172",
+                  "Source 151.101.66.49",
+                  "Source 172.16.18.1",
+                  "Source 172.16.18.101",
+                  "Source 172.16.18.29",
+                  "Source 172.16.18.30",
+                  "Source 172.16.18.32",
+                  "Source 172.16.18.33",
+                  "Source 172.16.18.34",
+                  "Source 172.16.18.35",
+                  "Source 172.16.18.38",
+                  "Source 172.16.18.41",
+                  "Source 172.16.18.42",
+                  "Source 172.16.18.43",
+                  "Source 172.16.18.47",
+                  "Source 172.16.18.49",
+                  "Source 172.16.18.54",
+                  "Source 172.16.18.55",
+                  "Source 172.16.18.56",
+                  "Source 172.16.18.57",
+                  "Source 172.16.18.60",
+                  "Source 172.16.18.63",
+                  "Source 172.16.18.73",
+                  "Source 172.16.18.74",
+                  "Source 172.16.18.75",
+                  "Source 172.16.18.76",
+                  "Source 172.16.20.1",
+                  "Source 172.16.20.100",
+                  "Source 172.16.20.110",
+                  "Source 172.16.20.141",
+                  "Source 172.16.20.152",
+                  "Source 172.16.20.182",
+                  "Source 172.16.20.191",
+                  "Source 172.16.20.2",
+                  "Source 172.16.20.224",
+                  "Source 172.16.20.228",
+                  "Source 172.16.20.234",
+                  "Source 172.16.20.236",
+                  "Source 172.16.20.237",
+                  "Source 172.16.20.238",
+                  "Source 172.16.20.243",
+                  "Source 172.16.20.244",
+                  "Source 172.16.20.247",
+                  "Source 172.16.20.3",
+                  "Source 172.16.20.42",
+                  "Source 172.16.20.44",
+                  "Source 172.16.20.5",
+                  "Source 172.16.20.51",
+                  "Source 172.16.20.6",
+                  "Source 172.16.20.60",
+                  "Source 172.16.20.66",
+                  "Source 172.16.20.7",
+                  "Source 172.16.20.74",
+                  "Source 172.16.20.76",
+                  "Source 172.16.20.8",
+                  "Source 172.16.20.89",
+                  "Source 172.16.21.10",
+                  "Source 172.16.21.101",
+                  "Source 172.16.21.104",
+                  "Source 172.16.21.105",
+                  "Source 172.16.21.11",
+                  "Source 172.16.21.112",
+                  "Source 172.16.21.114",
+                  "Source 172.16.21.12",
+                  "Source 172.16.21.120",
+                  "Source 172.16.21.14",
+                  "Source 172.16.21.140",
+                  "Source 172.16.21.149",
+                  "Source 172.16.21.155",
+                  "Source 172.16.21.16",
+                  "Source 172.16.21.160",
+                  "Source 172.16.21.176",
+                  "Source 172.16.21.186",
+                  "Source 172.16.21.190",
+                  "Source 172.16.21.191",
+                  "Source 172.16.21.192",
+                  "Source 172.16.21.193",
+                  "Source 172.16.21.194",
+                  "Source 172.16.21.200",
+                  "Source 172.16.21.201",
+                  "Source 172.16.21.204",
+                  "Source 172.16.21.210",
+                  "Source 172.16.21.213",
+                  "Source 172.16.21.215",
+                  "Source 172.16.21.219",
+                  "Source 172.16.21.220",
+                  "Source 172.16.21.222",
+                  "Source 172.16.21.229",
+                  "Source 172.16.21.230",
+                  "Source 172.16.21.233",
+                  "Source 172.16.21.239",
+                  "Source 172.16.21.240",
+                  "Source 172.16.21.241",
+                  "Source 172.16.21.243",
+                  "Source 172.16.21.248",
+                  "Source 172.16.21.25",
+                  "Source 172.16.21.250",
+                  "Source 172.16.21.251",
+                  "Source 172.16.21.254",
+                  "Source 172.16.21.29",
+                  "Source 172.16.21.31",
+                  "Source 172.16.21.38",
+                  "Source 172.16.21.40",
+                  "Source 172.16.21.52",
+                  "Source 172.16.21.54",
+                  "Source 172.16.21.56",
+                  "Source 172.16.21.60",
+                  "Source 172.16.21.62",
+                  "Source 172.16.21.64",
+                  "Source 172.16.21.66",
+                  "Source 172.16.21.68",
+                  "Source 172.16.21.69",
+                  "Source 172.16.21.7",
+                  "Source 172.16.21.72",
+                  "Source 172.16.21.8",
+                  "Source 172.16.21.80",
+                  "Source 172.16.21.81",
+                  "Source 172.16.21.86",
+                  "Source 172.16.21.92",
+                  "Source 172.16.21.94",
+                  "Source 172.16.21.97",
+                  "Source 172.16.23.102",
+                  "Source 172.16.23.20",
+                  "Source 172.16.23.240",
+                  "Source 172.16.23.27",
+                  "Source 172.16.23.3",
+                  "Source 172.16.23.31",
+                  "Source 172.16.23.5",
+                  "Source 172.16.23.9",
+                  "Source 172.16.30.54",
+                  "Source 172.16.30.56",
+                  "Source 172.16.6.140",
+                  "Source 172.16.6.155",
+                  "Source 172.16.6.156",
+                  "Source 172.16.6.170",
+                  "Source 172.16.6.177",
+                  "Source 172.16.6.245",
+                  "Source 172.16.6.246",
+                  "Source 172.16.6.247",
+                  "Source 172.16.6.249",
+                  "Source 172.16.6.253",
+                  "Source 172.16.6.6",
+                  "Source 172.16.6.8",
+                  "Source 172.19.0.20",
+                  "Source 172.217.169.219",
+                  "Source 172.67.174.52",
+                  "Source 176.236.125.60",
+                  "Source 18.198.0.192",
+                  "Source 18.244.179.103",
+                  "Source 18.245.31.83",
+                  "Source 18.66.102.127",
+                  "Source 185.125.190.40",
+                  "Source 185.125.190.81",
+                  "Source 185.125.190.82",
+                  "Source 185.125.190.83",
+                  "Source 185.189.182.234",
+                  "Source 193.140.63.118",
+                  "Source 195.175.180.217",
+                  "Source 195.175.182.82",
+                  "Source 195.33.200.18",
+                  "Source 195.33.200.19",
+                  "Source 195.33.200.26",
+                  "Source 199.232.210.172",
+                  "Source 199.232.214.172",
+                  "Source 2.16.10.166",
+                  "Source 2.18.79.139",
+                  "Source 2.18.79.143",
+                  "Source 2.20.73.80",
+                  "Source 2.20.92.125",
+                  "Source 2.22.89.20",
+                  "Source 2.22.89.35",
+                  "Source 20.190.147.1",
+                  "Source 20.42.73.30",
+                  "Source 216.58.212.27",
+                  "Source 216.58.214.187",
+                  "Source 23.207.210.154",
+                  "Source 23.32.101.128",
+                  "Source 23.33.90.104",
+                  "Source 3.127.172.245",
+                  "Source 3.160.57.45",
+                  "Source 34.149.100.209",
+                  "Source 34.95.113.255",
+                  "Source 52.113.194.132",
+                  "Source 52.123.135.185",
+                  "Source 52.165.164.15",
+                  "Source 52.167.160.173",
+                  "Source 77.81.186.67",
+                  "Source 77.81.186.68",
+                  "Source 77.81.186.69",
+                  "Source 8.8.4.4",
+                  "Source 8.8.8.8",
+                  "Source 82.98.66.230",
+                  "Source 85.199.214.98",
+                  "Source 91.189.91.48",
+                  "Source 91.189.91.82",
+                  "Source 91.189.91.83",
+                  "Source 92.123.45.190",
+                  "Source 95.101.180.27",
+                  "Source 98.85.153.80",
+                  "Source fe80::2413:2d35:8f79:f53c",
+                  "Source fe80::3b9:4aec:a73f:bb85",
+                  "Source fe80::466:85b:b70e:f5c6",
+                  "Source fe80::49ee:d289:e952:12c0",
+                  "Source fe80::fe03:9fff:fef1:711a",
+                  "172.16.18.63",
+                  "172.16.20.1",
+                  "156.146.52.30",
+                  "172.16.20.141",
+                  "10.100.10.23",
+                  "10.100.11.194",
+                  "172.16.18.54",
+                  "172.16.18.60",
+                  "172.16.18.101",
+                  "10.100.10.60",
+                  "10.100.10.14",
+                  "10.100.10.74",
+                  "140.82.121.34",
+                  "total_bytes 10.100.11.207",
+                  "total_bytes 10.100.10.121",
+                  "total_bytes 10.100.11.219",
+                  "total_bytes 140.82.121.34",
+                  "total_bytes 172.16.18.60",
+                  "total_bytes 10.100.10.74",
+                  "total_bytes",
+                  "total_bytes 10.100.11.229",
+                  "22",
+                  "9000",
+                  "47556",
+                  "42362",
+                  "43932",
+                  "39482",
+                  "161",
+                  "5158",
+                  "5222",
+                  "8085",
+                  "11127",
+                  "1514",
+                  "443",
+                  "2055",
+                  "5432",
+                  "41116",
+                  "7680",
+                  "47494",
+                  "34543",
+                  "37865",
+                  "50486",
+                  "53",
+                  "3260",
+                  "46220",
+                  "80"
+                ],
+                "prefix": "All except:",
+                "readOnly": true
+              }
+            },
+            "properties": [
+              {
+                "id": "custom.hideFrom",
+                "value": {
+                  "legend": false,
+                  "tooltip": false,
+                  "viz": true
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 9,
+        "w": 13,
+        "x": 11,
+        "y": 29
+      },
+      "id": 9,
+      "options": {
+        "displayLabels": [
+          "percent"
+        ],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "sortBy": "Value",
+          "sortDesc": false,
+          "values": [
+            "value",
+            "percent"
+          ]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "/.*/",
+          "values": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "multi",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes\" or r[\"_field\"] == \"dst_port\")  \r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")  \r\n  |> group(columns: [\"dst_port\"])  \r\n  |> sum(column: \"bytes\")  \r\n  |> rename(columns: {bytes: \"\"})  \r\n  |> sort(columns: [\" \"], desc: true)  \r\n  |> limit(n: 10)  \r\n  |> yield(name: \"top_destination_ports\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Destination (PORT)",
+      "type": "piechart"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {},
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 27,
+        "w": 24,
+        "x": 0,
+        "y": 38
+      },
+      "id": 12,
+      "options": {
+        "color": "blue",
+        "iteration": 14,
+        "labelSize": 10,
+        "monochrome": false,
+        "nodeColor": "semi-dark-green",
+        "nodePadding": 41,
+        "nodeWidth": 50,
+        "valueField": "src"
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"bytes\" or r[\"_field\"] == \"src_addr\" or r[\"_field\"] == \"dst_port\" or r[\"_field\"] == \"dst_addr\")\r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\")\r\n  |> group(columns: [\"src_addr\", \"dst_port\", \"dst_addr\"])\r\n  |> sum(column: \"bytes\")\r\n  |> map(fn: (r) => ({\r\n        source: r.src_addr,\r\n    service:\r\n          if r.dst_port == 80 then \"HTTP\"\r\n          else if r.dst_port == 443 then \"HTTPS\"\r\n          else if r.dst_port == 8080 then \"HTTP-Alt\"\r\n          else if r.dst_port == 8443 then \"HTTPS-Alt\"\r\n          else if r.dst_port == 53 then \"DNS\"\r\n          else if r.dst_port == 25 then \"SMTP\"\r\n          else if r.dst_port == 587 then \"SMTP-Submission\"\r\n          else if r.dst_port == 465 then \"SMTPS\"\r\n          else if r.dst_port == 110 then \"POP3\"\r\n          else if r.dst_port == 995 then \"POP3-SSL\"\r\n          else if r.dst_port == 22 then \"SSH\"\r\n          else if r.dst_port == 21 then \"FTP\"\r\n          else if r.dst_port == 23 then \"Telnet\"\r\n          else if r.dst_port == 161 then \"SNMP\"\r\n          else if r.dst_port == 3389 then \"RDP\"\r\n          else if r.dst_port == 3306 then \"MySQL\"\r\n          else if r.dst_port == 1433 then \"MSSQL\"\r\n          else if r.dst_port == 1521 then \"Oracle DB\"\r\n          else if r.dst_port == 6379 then \"Redis\"\r\n          else if r.dst_port == 993 then \"IMAP-SSL\"\r\n          else if r.dst_port == 143 then \"IMAP\"\r\n          else \"Other\",\r\n        target: r.dst_addr,\r\n        total_bytes: r.bytes\r\n  }))\r\n  |> yield(name: \"sankey_data\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Trafic Panel",
+      "transformations": [
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {},
+            "includeByName": {},
+            "indexByName": {
+              "service": 1,
+              "source": 0,
+              "target": 2,
+              "total_bytes": 3
+            },
+            "renameByName": {
+              "service": "Service",
+              "source": "Source",
+              "target": "Target",
+              "total_bytes": "Total Bytes"
+            }
+          }
+        }
+      ],
+      "type": "netsage-sankey-panel"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto",
+              "wrapText": false
+            },
+            "filterable": false,
+            "inspect": false
+          },
+          "decimals": 0,
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 65
+      },
+      "id": 11,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": [],
+          "reducer": [
+            "sum"
+          ],
+          "show": true
+        },
+        "showHeader": false
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"src_addr\" or r[\"_field\"] == \"dst_addr\" or r[\"_field\"] == \"dst_port\" or r[\"_field\"] == \"bytes\")\r\n  |> map(fn: (r) => ({ r with _value: string(v: r._value) }))  \r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false) \r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\") \r\n  |> map(fn: (r) => ({\r\n        _time: r._time,\r\n        Source: r.src_addr,\r\n        Destination: r.dst_addr,\r\n        Application: if exists r.dst_port and int(v: r.dst_port) == 80 then \"HTTP\"\r\n                     else if exists r.dst_port and int(v: r.dst_port) == 443 then \"HTTPS\"\r\n                     else if exists r.dst_port and int(v: r.dst_port) == 110 then \"POP3\"\r\n                     else if exists r.dst_port and int(v: r.dst_port) == 500 then \"IPSec\"\r\n                     else \"Unknown\",\r\n        Traffic_Bytes: if exists r.bytes then float(v: r.bytes) else 0.0\r\n  }))\r\n  |> yield(name: \"top_conversations\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Top Conversation",
+      "type": "table"
+    },
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "P951FEA4DE68E13C5"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "auto",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "inspect": false
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 24,
+        "x": 0,
+        "y": 73
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "pluginVersion": "11.5.2",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "P951FEA4DE68E13C5"
+          },
+          "query": "from(bucket: \"netflow\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"flows\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"src_addr\" or r[\"_field\"] == \"src_port\" or r[\"_field\"] == \"dst_addr\" or r[\"_field\"] == \"dst_port\")\r\n  |> map(fn: (r) => ({ r with _value: string(v: r._value) }))  \r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false) \r\n  |> pivot(rowKey:[\"_time\"], columnKey: [\"_field\"], valueColumn: \"_value\") \r\n  |> yield(name: \"last\")\r\n",
+          "refId": "A"
+        }
+      ],
+      "title": "Last_NetFlow_Connections",
+      "type": "table"
+    }
+  ],
+  "preload": false,
+  "refresh": "5s",
+  "schemaVersion": 40,
+  "tags": [],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-1m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Gardiyantest",
+  "uid": "eebjy4osznlkwc",
+  "version": 3,
+  "weekStart": ""
+}

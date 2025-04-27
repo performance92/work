@@ -1,0 +1,122 @@
+pipeline {
+    agent any
+    options {
+        disableConcurrentBuilds()
+    }
+
+    // Generic Webhook Trigger için parametreler
+    parameters {
+        string(name: 'jenkins-generic-webhook-trigger-plugin_uuid', defaultValue: '', description: 'UUID for webhook trigger')
+        string(name: 'repo', defaultValue: '', description: 'Repository name from webhook payload')
+        string(name: 'tag', defaultValue: '', description: 'Tag from webhook payload')
+    }
+
+    environment {
+        SOURCE_REGISTRY = "172.16.20.141:5005"
+        TARGET_REGISTRY = "172.16.20.141:5009"
+    }
+
+    stages {
+        // Webhook payload'ını kontrol etme
+        stage('Check Webhook Payload') {
+            when {
+                expression {
+                    // UUID, repo ve tag parametrelerinin boş olmadığını kontrol et
+                    return params.'jenkins-generic-webhook-trigger-plugin_uuid' != null &&
+                           params.repo != null &&
+                           params.tag != null
+                }
+            }
+            steps {
+                echo "✅ Webhook payload is valid. Starting pipeline..."
+                echo "UUID: ${params.'jenkins-generic-webhook-trigger-plugin_uuid'}"
+                echo "Repository: ${params.repo}"
+                echo "Tag: ${params.tag}"
+            }
+        }
+
+        // Registry'lere login olma
+        stage('Login to Registries') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'SOURCE_USER', passwordVariable: 'SOURCE_PASS')]) {
+                        sh "echo \"$SOURCE_PASS\" | docker login --username \"$SOURCE_USER\" --password-stdin $SOURCE_REGISTRY"
+                    }
+
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'TARGET_USER', passwordVariable: 'TARGET_PASS')]) {
+                        sh "echo \"$TARGET_PASS\" | docker login --username \"$TARGET_USER\" --password-stdin $TARGET_REGISTRY"
+                    }
+                }
+            }
+        }
+
+        // İmajları çekme ve taşıma
+        stage('Pull and Push All Images') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'SOURCE_USER', passwordVariable: 'SOURCE_PASS')]) {
+                        def repoOutput = sh(
+                            script: "curl -s -u \"$SOURCE_USER:$SOURCE_PASS\" http://$SOURCE_REGISTRY/v2/_catalog | jq -r '.repositories[]'",
+                            returnStdout: true
+                        ).trim()
+
+                        if (!repoOutput) {
+                            error "❌ No repositories found in source registry!"
+                        }
+
+                        def repositories = repoOutput.split('\n')
+                        echo "🔍 Found repositories: ${repositories}"
+
+                        for (repo in repositories) {
+                            def tagOutput = sh(
+                                script: "curl -s -u \"$SOURCE_USER:$SOURCE_PASS\" http://$SOURCE_REGISTRY/v2/$repo/tags/list | jq -r '.tags[]'",
+                                returnStdout: true
+                            ).trim()
+
+                            if (!tagOutput) {
+                                echo "⚠️ No tags found for repository: ${repo}, skipping..."
+                                continue
+                            }
+
+                            def tags = tagOutput.split('\n')
+                            echo "📦 Tags in ${repo}: ${tags}"
+
+                            for (tag in tags) {
+                                def imageName = "${SOURCE_REGISTRY}/${repo}:${tag}"
+
+                                def imageExists = sh(
+                                    script: "docker images -q ${imageName} || true",
+                                    returnStdout: true
+                                ).trim()
+
+                                if (imageExists) {
+                                    echo "✅ ${imageName} already exists locally, skipping pull."
+                                } else {
+                                    echo "⏬ Pulling ${imageName}..."
+                                    sh "docker pull ${imageName}"
+                                }
+
+                                withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'TARGET_USER', passwordVariable: 'TARGET_PASS')]) {
+                                    echo "🚀 Pushing ${imageName} to ${TARGET_REGISTRY}/${repo}:${tag}"
+                                    sh """
+                                        docker tag ${imageName} ${TARGET_REGISTRY}/${repo}:${tag}
+                                        docker push ${TARGET_REGISTRY}/${repo}:${tag}
+                                        docker rmi ${TARGET_REGISTRY}/${repo}:${tag} ${imageName} || true
+                                    """
+                                    echo "✅ ${repo}:${tag} successfully transferred and cleaned up!"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+    
+        
+            
+        
+    
+
+

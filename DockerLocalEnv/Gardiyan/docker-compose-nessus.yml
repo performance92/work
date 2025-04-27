@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+
+  nessus:
+    image: nexusdev.cekino.com/nessus:latest-oracle
+    container_name: nessus
+    ports:
+      - "8834:8834"
+    volumes:
+      - nessus_data:/opt/nessus/var/nessus:rw
+    deploy:
+      resources:
+        limits:
+          cpus: "0.60"
+    restart: always
+    environment:
+      TZ: "Europe/Istanbul"
+    user: "0:0"
+
+volumes:
+  nessus_data:
+
+networks:
+  gardiyan_network:
+    driver: bridge

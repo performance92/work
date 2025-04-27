@@ -1,0 +1,4 @@
+misc
+.dockerignore
+.git*
+**/*.py[cod]

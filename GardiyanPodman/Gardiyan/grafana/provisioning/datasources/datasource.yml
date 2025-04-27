@@ -1,0 +1,15 @@
+apiVersion: 1
+datasources:
+  - name: InfluxDB
+    type: influxdb
+    access: proxy
+    url: http://influxdb:8086
+    isDefault: true
+    jsonData:
+      version: Flux
+      organization: gardiyan  
+      defaultBucket: netflow
+      tlsSkipVerify: true
+    secureJsonData:
+      token: xcbA_bDTtj9y1vjdWc6h1f0ErAI8q-SH2Lb_xfC3uz8g_k6dKv-_eOXd_cRKDB0na1k4BTmIWOk9HROimBPgNA==
+

@@ -1,0 +1,166 @@
+pipeline {
+    agent any
+    options {
+        disableConcurrentBuilds()
+    }
+
+    // Generic Webhook Trigger için parametreler
+    parameters {
+        string(name: 'jenkins-generic-webhook-trigger-plugin_uuid', defaultValue: '', description: 'UUID for webhook trigger')
+        string(name: 'repo', defaultValue: '', description: 'Repository name from webhook payload')
+        string(name: 'tag', defaultValue: '', description: 'Tag from webhook payload')
+    }
+
+    environment {
+        SOURCE_REGISTRY = "172.16.20.141:5005"
+        TARGET_REGISTRY = "172.16.6.180:5002"
+    }
+
+    stages {
+        // Webhook payload'ını kontrol etme
+        stage('Check Webhook Payload') {
+            when {
+                expression {
+                    return params.'jenkins-generic-webhook-trigger-plugin_uuid' != null &&
+                           params.repo != null &&
+                           params.tag != null
+                }
+            }
+            steps {
+                echo "✅ Webhook payload is valid. Starting pipeline..."
+                echo "UUID: ${params.'jenkins-generic-webhook-trigger-plugin_uuid'}"
+                echo "Repository: ${params.repo}"
+                echo "Tag: ${params.tag}"
+            }
+        }
+
+        // Registry'lere login olma
+        stage('Login to Registries') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'SOURCE_USER', passwordVariable: 'SOURCE_PASS')]) {
+                        sh "echo \"$SOURCE_PASS\" | docker login --username \"$SOURCE_USER\" --password-stdin $SOURCE_REGISTRY"
+                    }
+
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentialss', usernameVariable: 'TARGET_USER', passwordVariable: 'TARGET_PASS')]) {
+                        sh "echo \"$TARGET_PASS\" | docker login --username \"$TARGET_USER\" --password-stdin $TARGET_REGISTRY"
+                    }
+                }
+            }
+        }
+
+        // İmajları çekme ve taşıma (sadece "latest" etiketli imajlar)
+        stage('Pull and Push All Images') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'SOURCE_USER', passwordVariable: 'SOURCE_PASS')]) {
+                        def repoOutput = sh(
+                            script: "curl -s -u \"$SOURCE_USER:$SOURCE_PASS\" http://$SOURCE_REGISTRY/v2/_catalog | jq -r '.repositories[]'",
+                            returnStdout: true
+                        ).trim()
+
+                        if (!repoOutput) {
+                            error "❌ No repositories found in source registry!"
+                        }
+
+                        def repositories = repoOutput.split('\n')
+                        echo "🔍 Found repositories: ${repositories}"
+
+                        for (repo in repositories) {
+                            def tagOutput = sh(
+                                script: "curl -s -u \"$SOURCE_USER:$SOURCE_PASS\" http://$SOURCE_REGISTRY/v2/${repo}/tags/list | jq -r '.tags[]'",
+                                returnStdout: true
+                            ).trim()
+
+                            if (!tagOutput) {
+                                echo "⚠️ No tags found for repository: ${repo}, skipping..."
+                                continue
+                            }
+
+                            def tags = tagOutput.split('\n')
+                            echo "📦 Tags in ${repo}: ${tags}"
+
+                            for (tag in tags) {
+                                // Sadece "latest" etiketli imajları işleme al
+                                if (tag != "latest") {
+                                    echo "Skipping non-latest tag: ${tag}"
+                                    continue
+                                }
+
+                                def imageName = "${SOURCE_REGISTRY}/${repo}:${tag}"
+
+                                def imageExists = sh(
+                                    script: "docker images -q ${imageName} || true",
+                                    returnStdout: true
+                                ).trim()
+
+                                if (imageExists) {
+                                    echo "✅ ${imageName} already exists locally, skipping pull."
+                                } else {
+                                    echo "⏬ Pulling ${imageName}..."
+                                    sh "docker pull ${imageName}"
+                                }
+
+                                withCredentials([usernamePassword(credentialsId: 'nexus-credentialss', usernameVariable: 'TARGET_USER', passwordVariable: 'TARGET_PASS')]) {
+                                    echo "🚀 Pushing ${imageName} to ${TARGET_REGISTRY}/${repo}:latest"
+                                    sh """
+                                        docker tag ${imageName} ${TARGET_REGISTRY}/${repo}:latest
+                                        docker push ${TARGET_REGISTRY}/${repo}:latest
+                                        docker rmi ${TARGET_REGISTRY}/${repo}:latest ${imageName} || true
+                                    """
+                                    echo "✅ ${repo}:latest successfully transferred and cleaned up!"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    // Pipeline sonrası işlemler
+    post {
+        success {
+            script {
+                def mailList = "s.parti@gardiyan.com,c.kara@gardiyan.com,e.akdeniz@gardiyan.com"
+                emailext(
+                    subject: "✅ Jenkins Pipeline tamamlandı: ${JOB_NAME} #${BUILD_NUMBER}",
+                    body: """
+                        <h1>🚀 Pipeline basarıyla tamamlandı</h1>
+                        <ul>
+                            <li><b>Job:</b> ${JOB_NAME}</li>
+                            <li><b>Build Number:</b> ${BUILD_NUMBER}</li>
+                            <li><b>Result:</b> ${currentBuild.result}</li>
+                        </ul>
+                        <p><b>Tüm imajlar aktarıldı ve gecici dosyalar temizlendi 🎉</b></p>
+                        <p><a href=\"${BUILD_URL}\">Console loglarını görmek için tıklayın</a></p>
+                    """,
+                    to: mailList,
+                    from: "devops@gardiyan.com",
+                    mimeType: 'text/html'
+                )
+            }
+        }
+        failure {
+            script {
+                def mailList = "s.parti@gardiyan.com,c.kara@gardiyan.com,e.akdeniz@gardiyan.com"
+                emailext(
+                    subject: "❌ Jenkins Pipeline başarısız: ${JOB_NAME} #${BUILD_NUMBER}",
+                    body: """
+                        <h2>⚠️ Pipeline başarısız oldu </h2>
+                        <ul>
+                            <li><b>Job:</b> ${JOB_NAME}</li>
+                            <li><b>Build Number:</b> ${BUILD_NUMBER}</li>
+                            <li><b>Result:</b> ${currentBuild.result}</li>
+                        </ul>
+                        <p><b>Lütfen pipeline console loglarını kontrol edin</b></p>
+                        <p><a href=\"${BUILD_URL}\">View Logs</a></p>
+                    """,
+                    to: mailList,
+                    from: "devops@gardiyan.com",
+                    mimeType: 'text/html'
+                )
+            }
+        }
+    }
+}

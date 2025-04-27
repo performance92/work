@@ -1,0 +1,81 @@
+pipeline {
+    agent any
+
+    options {
+        disableConcurrentBuilds()
+    }
+
+    environment {
+        SOURCE_REGISTRY = "172.16.6.180:5002"
+        TARGET_REGISTRY = "172.16.6.180"
+        HARBOR_PROJECT = "gardiyan"
+    }
+
+    stages {
+        stage('Login to Registries') {
+            steps {
+                withCredentials([
+                    usernamePassword(credentialsId: 'nexus-cred', usernameVariable: 'SRC_USER', passwordVariable: 'SRC_PASS'),
+                    usernamePassword(credentialsId: 'harbor-cred', usernameVariable: 'TGT_USER', passwordVariable: 'TGT_PASS')
+                ]) {
+                    sh '''
+                        echo "$SRC_PASS" | docker login --username "$SRC_USER" --password-stdin $SOURCE_REGISTRY
+                        echo "$TGT_PASS" | docker login --username "$TGT_USER" --password-stdin $TARGET_REGISTRY
+                    '''
+                }
+            }
+        }
+
+        stage('Transfer Images') {
+            steps {
+                withCredentials([
+                    usernamePassword(credentialsId: 'nexus-cred', usernameVariable: 'SRC_USER', passwordVariable: 'SRC_PASS'),
+                    usernamePassword(credentialsId: 'harbor-cred', usernameVariable: 'TGT_USER', passwordVariable: 'TGT_PASS')
+                ]) {
+                    script {
+                        def repos = sh(
+                            script: "curl -s -u \"$SRC_USER:$SRC_PASS\" http://$SOURCE_REGISTRY/v2/_catalog | jq -r '.repositories[]'",
+                            returnStdout: true
+                        ).trim().split('\n') as List
+
+                        if (repos.isEmpty()) {
+                            error "❌ Source registry'de repository bulunamadı!"
+                        }
+
+                        repos.each { repo ->
+                            def tags = sh(
+                                script: "curl -s -u \"$SRC_USER:$SRC_PASS\" http://$SOURCE_REGISTRY/v2/$repo/tags/list | jq -r '.tags[]'",
+                                returnStdout: true
+                            ).trim().split('\n') as List
+
+                            if (tags.isEmpty()) {
+                                echo "⚠️ $repo için tag bulunamadı, atlanıyor."
+                                return
+                            }
+
+                            tags.each { tag ->
+                                def srcImage = "$SOURCE_REGISTRY/$repo:$tag"
+                                def tgtImage = "$TARGET_REGISTRY/$HARBOR_PROJECT/$repo:$tag"
+
+                                if (!sh(script: "docker images -q $srcImage || true", returnStdout: true).trim()) {
+                                    echo "⏬ Pulling $srcImage"
+                                    sh "docker pull $srcImage"
+                                } else {
+                                    echo "✅ $srcImage zaten var, pull atlanıyor."
+                                }
+
+                                echo "🚀 Pushing $tgtImage"
+                                sh """
+                                    docker tag $srcImage $tgtImage
+                                    docker push $tgtImage
+                                    docker rmi -f $tgtImage $srcImage || true
+                                """
+                                echo "✅ $repo:$tag Harbor’a aktarıldı."
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

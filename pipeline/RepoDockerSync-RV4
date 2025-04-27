@@ -1,0 +1,94 @@
+pipeline {
+    agent any
+    
+    environment {
+        SOURCE_REGISTRY = "nexus.cekino.local:5005"
+        TARGET_REGISTRY = "172.16.6.180:5002"
+    }
+
+    stages {
+        stage('Login to Registries') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'SOURCE_USER', passwordVariable: 'SOURCE_PASS')]) {
+                        sh "echo \"$SOURCE_PASS\" | docker login --username \"$SOURCE_USER\" --password-stdin $SOURCE_REGISTRY"
+                    }
+
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentialss', usernameVariable: 'TARGET_USER', passwordVariable: 'TARGET_PASS')]) {
+                        sh "echo \"$TARGET_PASS\" | docker login --username \"$TARGET_USER\" --password-stdin $TARGET_REGISTRY"
+                    }
+                }
+            }
+        }
+
+        stage('Pull and Push All Images') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'SOURCE_USER', passwordVariable: 'SOURCE_PASS')]) {
+                        def repoOutput = sh(
+                            script: "curl -s -u \"$SOURCE_USER:$SOURCE_PASS\" http://$SOURCE_REGISTRY/v2/_catalog | jq -r '.repositories[]'",
+                            returnStdout: true
+                        ).trim()
+
+                        if (!repoOutput) {
+                            error "No repositories found in source registry!"
+                        }
+
+                        def repositories = repoOutput.split('\n')
+                        echo "Repositories: ${repositories}"
+
+                        for (repo in repositories) {
+                            def tagOutput = sh(
+                                script: "curl -s -u \"$SOURCE_USER:$SOURCE_PASS\" http://$SOURCE_REGISTRY/v2/$repo/tags/list | jq -r '.tags[]'",
+                                returnStdout: true
+                            ).trim()
+
+                            if (!tagOutput) {
+                                echo "No tags found for repository: ${repo}, skipping..."
+                                continue
+                            }
+
+                            def tags = tagOutput.split('\n')
+                            echo "Tags in ${repo}: ${tags}"
+
+                            for (tag in tags) {
+                                def imageName = "${SOURCE_REGISTRY}/${repo}:${tag}"
+
+                                // Eğer imaj localde varsa pull etme
+                                def imageExists = sh(
+                                    script: "docker images -q ${imageName} || true",
+                                    returnStdout: true
+                                ).trim()
+
+                                if (imageExists) {
+                                    echo "✅ ${imageName} zaten localde mevcut, pull atlanıyor!"
+                                } else {
+                                    echo "⏬ ${imageName} indiriliyor..."
+                                    sh "docker pull ${imageName}"
+                                }
+
+                                echo "🚀 ${imageName} push ediliyor → ${TARGET_REGISTRY}/${repo}:${tag}"
+                                sh """
+                                    docker tag ${imageName} ${TARGET_REGISTRY}/${repo}:${tag}
+                                    docker push ${TARGET_REGISTRY}/${repo}:${tag}
+                                    docker rmi ${TARGET_REGISTRY}/${repo}:${tag} ${imageName} || true
+                                """
+                                echo "✅ ${repo}:${tag} başarıyla taşındı ve localden silindi!"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "🎉 Tüm imajlar başarıyla taşındı ve temizlendi!"
+        }
+        failure {
+            echo "❌ Kopyalama işlemi sırasında bir hata oluştu!"
+        }
+    }
+}
+

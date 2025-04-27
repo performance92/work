@@ -1,0 +1,13 @@
+{
+    "name": "guestbook",
+    "version": "1.0.0",
+    "description": "Basit bir Ziyaretçi Defteri Uygulaması",
+    "main": "index.js",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "dependencies": {
+      "express": "^4.18.2"
+    }
+  }
+  

@@ -1,0 +1,17 @@
+var stream_data = stream
+  |from()
+    .measurement('vsphere_vm_cpu')
+  |where(lambda: "cpu.usage.average" > 0)
+  |window()
+    .period(1m)
+    .every(30s)
+  |mean('cpu.usage.average')
+    .as('avg_cpu')
+
+stream_data
+  |alert()
+    .crit(lambda: "avg_cpu" > 10)
+    .message('{{ .Level }}: {{ .Tags.vmname }} - CPU is {{ index .Fields "avg_cpu" | printf "%.2f" }}%')
+    .post('http://alertmanager:9093/api/v1/alerts')
+    .log('/tmp/cpu_stream_alerts.log')
+

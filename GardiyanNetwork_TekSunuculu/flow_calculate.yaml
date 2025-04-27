@@ -1,0 +1,9 @@
+# flow-estimate.yaml
+
+devices: 50               # Switch/firewall/router sayısı
+flows_per_second: 300     # Her cihazdan saniyede ortalama kaç flow geliyor
+average_flow_size: 150    # Her flow'un ortalama boyutu (byte cinsinden)
+
+compression_ratio: 0.5    # InfluxDB'nin sıkıştırma oranı (0.5 = %50 küçülme)
+
+retention_days: 7         # Veriyi kaç gün saklamak istiyorsun

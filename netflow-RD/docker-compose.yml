@@ -1,0 +1,197 @@
+services:
+  zookeeper:
+    image: nexusdev.cekino.com:5005/cp-zookeeper:latest
+    container_name: zookeeper
+    networks:
+      - gardiyan_network
+    restart: always
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    healthcheck:
+      test: ["CMD", "echo", "ruok", "|", "nc", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: nexusdev.cekino.com:5005/cp-kafka:latest
+    container_name: kafka
+    restart: always
+    networks:
+      - gardiyan_network
+    depends_on:
+      zookeeper:
+        condition: service_healthy
+    volumes:
+      - ./kafka/init:/opt/kafka/init
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_NUM_PARTITIONS: 1
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "kafka:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    command: >
+      bash -c "
+        /etc/confluent/docker/run &
+        sleep 5 &&
+        kafka-topics --create --topic flows-messages --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1 --if-not-exists &&
+        wait
+      "
+
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    networks:
+      - gardiyan_network
+    ports:
+      - "8080:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: netflow
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9092
+    depends_on:
+      - kafka
+
+  goflow2:
+    image: nexusdev.cekino.com:5005/goflow2:latest
+    container_name: goflow2
+    networks:
+      - gardiyan_network
+    restart: always
+    ports:
+      - "2055:2055/udp"
+      - "6343:6343/udp"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    command: >
+      -transport=kafka
+      -transport.kafka.brokers=kafka:9092
+      -transport.kafka.topic=flows-messages
+      -transport.kafka.version=2.8.0
+      -format=json
+      -loglevel=debug
+
+  #grafana:
+  #  image: grafana/grafana:latest
+  #  container_name: grafana
+  #  ports:
+  #    - "3001:3000"
+  #  volumes:
+  #    - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+  #    - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+  #    - ./grafana/dashboards:/grafana/dashboards
+  #    - grafana_data:/var/lib/grafana
+
+  #  environment:
+  #    - GF_SECURITY_ADMIN_USER=admin
+  #    - GF_SECURITY_ADMIN_PASSWORD=admin
+
+
+  questdb:
+    image: questdb/questdb:latest
+    container_name: questdb
+    networks:
+      - gardiyan_network
+    restart: always
+    ports:
+      - "9000:9000"  # HTTP
+      - "9009:9009"  # PostgreSQL wire protocol
+      - "8812:8812"  # InfluxDB line protocol
+    volumes:
+      - questdb_data:/var/lib/questdb
+      - ./questdb/db/init.sql:/var/lib/questdb/db/init.sql
+    environment:
+      - QDB_PG_WIRE_ENABLED=true
+      - QDB_HTTP_ENABLED=true
+      - QDB_LINE_TCP_ENABLED=true
+      - QDB_INIT_SQL=/var/lib/questdb/db/init.sql
+
+  jobmanager:
+    image: flink:1.17-scala_2.12
+    hostname: jobmanager
+    networks:
+      - gardiyan_network
+    restart: always
+    container_name: flink-jobmanager
+    ports:
+      - "8081:8081"
+    volumes:
+    - ./flink-job:/opt/flink/job
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+      - |
+        FLINK_PROPERTIES=
+        jobmanager.memory.process.size: 2048m
+        jobmanager.memory.jvm-metaspace.size: 512m
+        jobmanager.memory.jvm-overhead.fraction: 0.1
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+    command: >
+      bash -c "
+        ./bin/jobmanager.sh start &&
+        sleep 1 &&
+        /opt/flink/bin/flink run -d /opt/flink/job/netflow-processor.jar &&
+        sleep 1 &&
+        /opt/flink/bin/flink run -d /opt/flink/job/netflow-p95-processor.jar &&
+        sleep 1 &&
+        /opt/flink/bin/flink run -d /opt/flink/job/netflow-top-app-processor.jar &&
+        tail -f /dev/null
+      "
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://jobmanager:8081"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  taskmanager:
+    image: flink:1.17-scala_2.12
+    hostname: taskmanager
+    container_name: flink-taskmanager
+    networks:
+      - gardiyan_network
+    restart: always
+    depends_on:
+      jobmanager:
+        condition: service_healthy
+    environment:
+      - JOB_MANAGER_RPC_ADDRESS=jobmanager
+      - |
+        FLINK_PROPERTIES=
+        taskmanager.memory.process.size: 5120m
+        taskmanager.memory.framework.heap.size: 1024m
+        taskmanager.memory.task.heap.size: 2048m
+        taskmanager.memory.managed.size: 512m
+        taskmanager.memory.jvm-metaspace.size: 512m
+        taskmanager.memory.jvm-overhead.fraction: 0.1
+        taskmanager.numberOfTaskSlots: 4
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "2"
+    command: taskmanager
+
+
+networks:
+  gardiyan_network:
+    driver: bridge
+
+volumes:
+  grafana_data:
+  questdb_data:

@@ -1,0 +1,60 @@
+version: '3'
+
+services:
+  db:
+    image: mariadb:10.5
+    container_name: matomo-db
+    restart: always
+    networks:
+      - matomo  
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: matomo
+      MYSQL_USER: matomo
+      MYSQL_PASSWORD: matomo_pass
+    volumes:
+      - db_data:/var/lib/mysql
+
+  matomo:
+    image: matomo
+    container_name: matomo-web
+    restart: always
+    networks:
+      - matomo  
+    environment:
+      MATOMO_DATABASE_HOST: db
+      MATOMO_DATABASE_ADAPTER: mysqli
+      MATOMO_DATABASE_TABLES_PREFIX: matomo_
+      MATOMO_DATABASE_USERNAME: matomo
+      MATOMO_DATABASE_PASSWORD: matomo_pass
+      MATOMO_DATABASE_DBNAME: matomo
+    depends_on:
+      - db
+    volumes:
+      - matomo_data:/var/www/html
+    expose:
+      - "80"
+
+  nginx:
+    image: nginx:latest
+    container_name: matomo-nginx
+    restart: always
+    networks:
+      - matomo  
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/nginx/certs
+    depends_on:
+      - matomo
+
+networks:
+  matomo:
+    driver: bridge
+
+
+volumes:
+  db_data:
+  matomo_data:
+

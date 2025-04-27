@@ -1,0 +1,81 @@
+FROM ubuntu:22.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Update and install necessary packages
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    curl \
+    net-tools \
+    iputils-ping \
+    iproute2 \
+    tini \
+    vsftpd \
+    tftpd-hpa \
+    snmp \
+    snmpd \
+    nano \
+    vim \
+    && apt-get autoremove -y && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Configure TFTP
+RUN echo 'TFTP_USERNAME="tftp"\n\
+TFTP_DIRECTORY="/var/lib/tftpboot"\n\
+TFTP_ADDRESS=":69"\n\
+TFTP_OPTIONS="--secure --create"' > /etc/default/tftpd-hpa && \
+    mkdir -p /var/lib/tftpboot && chmod 777 /var/lib/tftpboot && chown tftp:tftp /var/lib/tftpboot
+
+# Add users for FTP and PAM
+RUN useradd -m ftp_gardiyan && echo "ftp_gardiyan:Cekino.2023!" | chpasswd && \
+    useradd -m ftp1 && echo "ftp1:Cekino.2024!" | chpasswd
+
+# Configure VSFTPD
+RUN echo "listen=NO\n\
+listen_ipv6=YES\n\
+anonymous_enable=NO\n\
+local_enable=YES\n\
+write_enable=YES\n\
+local_umask=022\n\
+dirmessage_enable=YES\n\
+use_localtime=YES\n\
+xferlog_enable=YES\n\
+connect_from_port_20=YES\n\
+chroot_local_user=YES\n\
+pam_service_name=vsftpd\n\
+force_dot_files=YES\n\
+pasv_min_port=40000\n\
+pasv_max_port=40010\n\
+secure_chroot_dir=/var/run/vsftpd/empty\n\
+allow_writeable_chroot=YES" > /etc/vsftpd.conf
+
+# Ensure secure_chroot_dir exists
+RUN mkdir -p /var/run/vsftpd/empty && chmod 755 /var/run/vsftpd/empty
+
+# Configure SNMP
+RUN echo "com2sec readonly  default         public\n\
+group   MyROGroup v1             readonly\n\
+view    all     included  .1\n\
+access  MyROGroup \"\"      any       noauth    exact  all    none   none" > /etc/snmp/snmpd.conf
+
+# Create symbolic link
+RUN mkdir -p /home/gardiyan/Repo/agent/receive_files/download/ && \
+    chown ftp1:ftp1 /home/gardiyan/Repo/agent/receive_files/download/ && \
+    ln -s /home/ftp1/ftp/files /home/gardiyan/Repo/agent/receive_files/download/files
+
+# Set permissions for FTP user directory
+RUN mkdir -p /home/ftp_gardiyan && chmod 755 /home/ftp_gardiyan && chown ftp_gardiyan:ftp_gardiyan /home/ftp_gardiyan
+
+# Entry point script for dynamic IP
+RUN mkdir -p /app && echo "#!/bin/bash\n\
+set -e\n\
+HOST_IP=\$(ip route | awk '/default/ { print \$3 }')\n\
+echo \"pasv_address=\${HOST_IP}\" >> /etc/vsftpd.conf\n\
+/usr/sbin/vsftpd /etc/vsftpd.conf &\n\
+service tftpd-hpa start || { echo \"TFTPD failed to start!\"; exit 1; }\n\
+service snmpd start || { echo \"SNMPD failed to start!\"; exit 1; }\n\
+tail -f /dev/null" > /app/entrypoint.sh && chmod +x /app/entrypoint.sh
+
+VOLUME ["/home/gardiyan/Repo"]
+
+ENTRYPOINT ["/usr/bin/tini", "--", "/app/entrypoint.sh"]
+

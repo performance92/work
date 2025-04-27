@@ -1,0 +1,126 @@
+pipeline {
+    agent any
+
+    environment {
+        TEST_REPO = "http://git.cekino.local/s.parti/Gardiyanall.git"
+        PROD_REPO = "https://git.gardiyan.com/Gardiyan/Gardiyanall.git"
+        GIT_CREDENTIALS = "git-credentials-id"
+        BRANCH = "devops"
+    }
+
+    stages {
+        stage('Checkout Test Repo') {
+            steps {
+                sh '''
+                    rm -rf repo
+                    git clone --depth 1 ${TEST_REPO} repo
+                    cd repo
+                '''
+            }
+        }
+
+        stage('Delete Old Git Data & Reinitialize') {
+            steps {
+                sh '''
+                    cd repo
+                    rm -rf .git  
+                    # rm -rf backupdb.sh restoredb.sh
+                    git init
+                    git config --global user.email "s.parti@gardiyan.com"
+                    git config --global user.name "s.parti"
+                '''
+            }
+        }
+
+        stage('Set Remote Repository Securely') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                        sh '''
+                            cd repo
+                            git remote add origin https://${GIT_USER}:${GIT_PASS}@git.gardiyan.com/Gardiyan/Gardiyanall.git
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Update YML Files, README.md') {
+            steps {
+                sh '''
+                    find repo -name "*.yml" -exec sed -i 's/nexusdev.cekino.com:5005/repo.gardiyan.com:80/g' {} +
+                    sed -i 's/nexusdev.cekino.com:5005/repo.gardiyan.com:80/g' repo/README.md
+                    sed -i 's|http://git.cekino.local/s.parti/Gardiyanall.git|https://git.gardiyan.com/Gardiyan/Gardiyanall.git|g' repo/README.md
+                    sed -i 's/nexusdev.cekino.com:5005/repo.gardiyan.com:80/g' repo/gardiyan_install.sh
+                    sed -i 's|http://git.cekino.local/s.parti/Gardiyanall.git|https://git.gardiyan.com/Gardiyan/Gardiyanall.git|g' repo/gardiyan_install.sh	
+                '''
+            }
+        }
+
+        stage('Commit & Force Push to Production Repo') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: GIT_CREDENTIALS, usernameVariable: 'GIT_USER', passwordVariable: 'GIT_PASS')]) {
+                        sh '''
+                            cd repo
+                            git checkout -b ${BRANCH}  
+                            git add .
+                            git commit -m "GardiyanV1"
+                            git push --force origin ${BRANCH}
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    // Pipeline sonrası işlemler
+    post {
+        success {
+            script {
+                def mailList = "s.parti@gardiyan.com,c.kara@gardiyan.com,e.akdeniz@gardiyan.com"
+                emailext(
+                    subject: "✅  Pipeline tamamlandı: ${JOB_NAME} #${BUILD_NUMBER}",
+                    body: """
+                        <h1>🚀 Pipeline başarıyla tamamlandı</h1>
+                        <ul>
+                            <li><b>Job:</b> ${JOB_NAME}</li>
+                            <li><b>Build Number:</b> ${BUILD_NUMBER}</li>
+                            <li><b>Result:</b> ${currentBuild.result}</li>
+                        </ul>
+                        <p><b>Repo senkronizasyonu başarı ile gerçekleştirildi "https://git.gardiyan.com/Gardiyan/Gardiyanprod.git" adresinden kontrol edebilirsiniz🎉</b></p>
+                        <p><a href="${BUILD_URL}">Console loglarını görmek için tıklayın</a></p>
+                    """,
+                    to: mailList,
+                    from: "devops@gardiyan.com",
+                    mimeType: 'text/html'
+                )
+            }
+        }
+        failure {
+            script {
+                def mailList = "s.parti@gardiyan.com,c.kara@gardiyan.com,e.akdeniz@gardiyan.com"
+                emailext(
+                    subject: "❌  Pipeline başarısız: ${JOB_NAME} #${BUILD_NUMBER}",
+                    body: """
+                        <h2>⚠️ Repo senkronizasyonu başarısız</h2>
+                        <ul>
+                            <li><b>Job:</b> ${JOB_NAME}</li>
+                            <li><b>Build Number:</b> ${BUILD_NUMBER}</li>
+                            <li><b>Result:</b> ${currentBuild.result}</li>
+                        </ul>
+                        <p><b>Lütfen pipeline console loglarını kontrol edin</b></p>
+                        <p><a href="${BUILD_URL}">View Logs</a></p>
+                    """,
+                    to: mailList,
+                    from: "devops@gardiyan.com",
+                    mimeType: 'text/html'
+                )
+            }
+        }
+        always {
+            echo "Workspace temizleniyor..."
+            deleteDir()
+        }
+    }
+}

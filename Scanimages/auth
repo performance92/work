@@ -1,0 +1,113 @@
+pipeline {
+    agent any
+
+    environment {
+        IMAGE_NAME = 'rabbitmq'
+        IMAGE_TAG = 'latest'
+        NEXUS_REPO = '172.16.20.141:5005'
+        HARBOR_REPO = '172.16.6.180'
+        HARBOR_PROJECT = 'gardiyan'
+        SCAN_JSON = 'image-report.json'
+        SCAN_HTML = 'image-report.html'
+        TRIVY_CACHE = 'trivy-cache'
+        TRIVY_CACHE_DIR = '/root/.cache/trivy'
+        HTML_TEMPLATE = 'html.tpl'
+    }
+
+    stages {
+        stage('Pull from Nexus') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'nexus-credentials', usernameVariable: 'NEXUS_USER', passwordVariable: 'NEXUS_PASS')]) {
+                    sh '''
+                        echo "$NEXUS_PASS" | docker login -u "$NEXUS_USER" --password-stdin $NEXUS_REPO
+                        docker pull $NEXUS_REPO/$IMAGE_NAME:$IMAGE_TAG
+                    '''
+                }
+            }
+        }
+
+        stage('Trivy Scan') {
+            steps {
+                sh '''
+                    mkdir -p ${TRIVY_CACHE}
+
+                    docker run --rm \
+                      -v /var/run/docker.sock:/var/run/docker.sock \
+                      -v $(pwd)/${TRIVY_CACHE}:${TRIVY_CACHE_DIR} \
+                      aquasec/trivy:latest image \
+                      --cache-dir ${TRIVY_CACHE_DIR} \
+                      --format json \
+                      -o ${TRIVY_CACHE_DIR}/${SCAN_JSON} \
+                      $NEXUS_REPO/$IMAGE_NAME:$IMAGE_TAG
+
+                    curl -sSL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl -o ${TRIVY_CACHE}/${HTML_TEMPLATE}
+
+                    docker run --rm \
+                      -v /var/run/docker.sock:/var/run/docker.sock \
+                      -v $(pwd)/${TRIVY_CACHE}:${TRIVY_CACHE_DIR} \
+                      aquasec/trivy:latest image \
+                      --cache-dir ${TRIVY_CACHE_DIR} \
+                      --format template \
+                      --template "@${TRIVY_CACHE_DIR}/${HTML_TEMPLATE}" \
+                      -o ${TRIVY_CACHE_DIR}/${SCAN_HTML} \
+                      $NEXUS_REPO/$IMAGE_NAME:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Push to Harbor') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'harbor-cred', usernameVariable: 'HARBOR_USER', passwordVariable: 'HARBOR_PASS')]) {
+                    sh '''
+                       echo "$HARBOR_PASS" | docker login -u "$HARBOR_USER" --password-stdin $HARBOR_REPO
+                       docker tag $NEXUS_REPO/$IMAGE_NAME:$IMAGE_TAG $HARBOR_REPO/$HARBOR_PROJECT/$IMAGE_NAME:$IMAGE_TAG
+                       docker push $HARBOR_REPO/$HARBOR_PROJECT/$IMAGE_NAME:$IMAGE_TAG
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                def criticalCount = sh (
+                    script: "jq '[.Results[]?.Vulnerabilities[]? | select(.Severity==\"CRITICAL\")] | length' ${TRIVY_CACHE}/${SCAN_JSON}",
+                    returnStdout: true
+                ).trim()
+                env.TRIVY_CRITICAL_RESULT = criticalCount.toInteger() > 0 ?
+                    "⚠️ <b>CRITICAL açık bulundu</b>, ancak imaj gönderildi." :
+                    "✅ <b>CRITICAL açık bulunmadı</b>, imaj gönderildi."
+            }
+
+            archiveArtifacts artifacts: "${TRIVY_CACHE}/${SCAN_JSON},${TRIVY_CACHE}/${SCAN_HTML}", allowEmptyArchive: true
+
+            emailext(
+                subject: "İmage Raporu - ${env.IMAGE_NAME}",
+                body: """<html>
+                <body>
+                    <p>Bilgilendirme,</p>
+                    <p>Güvenlik taraması ve imaj aktarımı tamamlandı.</p>
+                    
+                    <p><b>Durum:</b></p>
+                    <p>${env.TRIVY_CRITICAL_RESULT}</p>
+                    
+                    <p>Raporlar ekte yer almaktadır.</p>
+                    
+                    <p>Lütfen inceleyin,<br>Gardiyan-Devops</p>
+                </body>
+                </html>""",
+                attachmentsPattern: "${TRIVY_CACHE}/${SCAN_JSON},${TRIVY_CACHE}/${SCAN_HTML}",
+                to: 's.parti@gardiyan.com,d.esen@gardiyan.com',
+                from: 'devops@gardiyan.com',
+                mimeType: "text/html"
+            )
+
+            sh '''
+                docker rmi $NEXUS_REPO/$IMAGE_NAME:$IMAGE_TAG || true
+                docker rmi $HARBOR_REPO/$HARBOR_PROJECT/$IMAGE_NAME:$IMAGE_TAG || true
+                rm -f ${TRIVY_CACHE}/${SCAN_JSON} ${TRIVY_CACHE}/${SCAN_HTML} ${TRIVY_CACHE}/${HTML_TEMPLATE} || true
+            '''
+        }
+    }
+}

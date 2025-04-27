@@ -1,0 +1,45 @@
+services:
+  jenkins_agent1:
+    image: agent1
+    build:
+      context: .
+      dockerfile: Dockerfile-agent1
+    privileged: true
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 1024
+        hard: 524288
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./repository:/repository
+  
+  jenkins_agent2:
+    image: agent2
+    build:
+      context: .
+      dockerfile: Dockerfile-agent2
+    privileged: true
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 1024
+        hard: 524288
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./repository:/repository
+  
+  jenkins_agent3:
+    image: agent3
+    build:
+      context: .
+      dockerfile: Dockerfile-agent3   
+    privileged: true
+    restart: unless-stopped
+    ulimits:
+      nofile:
+        soft: 1024
+        hard: 524288
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./repository:/repository

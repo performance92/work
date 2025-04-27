@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  mongodb:
+    image: mongo:4.4
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    networks:
+      - gardiyan_network
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: rootpass
+    volumes:
+      - ./init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    command: ["mongod", "--bind_ip_all"]
+
+  postgres:
+    build:
+      context: ./postgres_fdw    # istenirse buil edilir
+    container_name: pg_mongo_fdw # istenirse isim değiştirilir
+    image: nexusdev.cekino.com:5005/postgres:13  # build alınmış imaj
+    environment:
+      POSTGRES_PASSWORD: Pg.1234
+      POSTGRES_USER: postgres
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    depends_on:
+      - mongodb
+    networks:
+      - gardiyan_network
+
+networks:
+  gardiyan_network:
+    driver: bridge

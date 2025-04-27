@@ -1,0 +1,22 @@
+FROM openjdk:11-jre-slim
+
+EXPOSE 9090 9091 5222 5269 5275 3478 3479
+
+ENV OPENFIRE_VERSION=4.9.2
+ENV OPENFIRE_URL=https://www.igniterealtime.org/downloadServlet?filename=openfire/openfire_4_9_2.tar.gz
+##test
+RUN apt-get update && apt-get install -y \
+wget vim nano \
+    && wget -O openfire.tar.gz "$OPENFIRE_URL" \
+    && mkdir -p /opt/openfire \
+    && tar -xzf openfire.tar.gz -C /opt/openfire --strip-components=1 \
+    && chmod +x /opt/openfire/bin/openfire.sh \
+    && rm openfire.tar.gz \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt/openfire
+
+VOLUME ["/opt/openfire/conf", "/opt/openfire/plugins", "/opt/openfire/logs", "/opt/openfire/resources", "/opt/openfire/bin"]
+
+CMD ["bin/openfire.sh"]

@@ -1,0 +1,6 @@
+FROM repo.gardiyan.com:5005/grafana:latest
+
+RUN grafana-cli plugins install netsage-sankey-panel
+
+ENTRYPOINT ["/run.sh"]
+

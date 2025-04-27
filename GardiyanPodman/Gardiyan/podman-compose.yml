@@ -1,0 +1,795 @@
+
+services:
+  portainer:
+    image: nexusdev.cekino.com:5005/portainer:latest
+    container_name: portainer
+    restart: always
+    ports:
+      - "9000:9000"  
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock  
+      - portainer_data:/data  
+    environment:
+      TZ: "Europe/Istanbul"  
+
+  postgres:  
+    image: nexusdev.cekino.com:5005/postgres:15
+    container_name: postrges
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Cekino.123!
+    ports:
+      - "7100:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+      - ./dbbackup/init.sql:/docker-entrypoint-initdb.d/00_init.sql
+      - ./dbbackup/guacamole.sql:/docker-entrypoint-initdb.d/05_guacamole.sql
+      - ./dbbackup/init.schema.sql:/docker-entrypoint-initdb.d/init.schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - gardiyan_network
+
+  guacamole:
+    image: nexusdev.cekino.com:5005/guacamole-frontend:latest
+    container_name: guacamole
+    restart: always
+    depends_on:
+      - postgres
+      - guacd
+    environment:
+      GUACD_HOSTNAME: guacd
+      POSTGRESQL_HOSTNAME: postgres
+      POSTGRESQL_DATABASE: guacamole
+      POSTGRESQL_USER: postgres
+      POSTGRESQL_PASSWORD: Cekino.123!
+    ports:
+      - "8080:8080"
+      - "5012:5000"
+    volumes:
+      - guacamole_data:/root/.guacamole:rw
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    networks:
+      - gardiyan_network
+  
+  guacd:
+    image: nexusdev.cekino.com:5005/guacd-backend:latest
+    container_name: guacd
+    ports:
+      - "4822:4822"
+    restart: always
+    volumes:
+      - guacamole_data:/root/.guacamole:rw
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    networks:
+      - gardiyan_network
+
+  auth_frontend:
+    image: nexusdev.cekino.com:5005/auth_frontend:latest
+    container_name: auth_frontend
+    restart: always
+    ports:
+      - "3000:80"
+    depends_on:
+      - postgres
+    volumes:
+      - auth_frontend_data:/data
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - /home/gardiyan/Gardiyan/License:/home/gardiyan/Gardiyan/License
+    networks:
+      - gardiyan_network
+
+  auth:
+    image: nexusdev.cekino.com:5005/auth:2.5.3.35
+    container_name: auth
+    restart: always
+    ports:
+      - "7281:8081"
+    volumes:
+      - auth_data:/data
+      - ./etcAuth/com.karcin.security.datasource.postgres.cfg:/opt/karaf/etc/com.karcin.security.datasource.postgres.cfg
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - /home/gardiyan/Gardiyan/License:/home/gardiyan/Gardiyan/License
+    depends_on:
+      - postgres
+    command: >
+      sh -c "
+      if [ ! -f /data/initialized ]; then
+        echo 'First time startup: Running db-deploy';
+        /opt/karaf/bin/karaf & sleep 60 && /opt/karaf/bin/client 'karcin:db-deploy';
+        touch /data/initialized;
+        wait;
+      else
+        echo 'Skipping db-deploy, already initialized';
+        /opt/karaf/bin/karaf;
+      fi"            
+    networks:
+      - gardiyan_network
+
+  client_frontend:
+    image: nexusdev.cekino.com:5005/client_frontend:latest
+    container_name: client_frontend
+    restart: always
+    ports:
+      - "3005:80"
+    depends_on:
+      - postgres
+    volumes:
+      - client_frontend_data:/data
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - /home/gardiyan/Gardiyan/License:/home/gardiyan/Gardiyan/License
+    networks:
+      - gardiyan_network
+
+  client:
+    image: nexusdev.cekino.com:5005/client:2.5.5.99
+    container_name: client
+    restart: always
+    ports:
+      - "7288:8081"
+      - "333:333"
+      - "5003:5005"
+      - "7282:8181"
+      - "7200:7200"
+    environment:
+      JAVA_OPTS: "-Xms1024m -Xmx4196m"
+    volumes:
+      - client_data:/data
+      - ./etcClient/com.karcin.client.datasource.cfg:/opt/karaf/etc/com.karcin.client.datasource.cfg
+      - ./etcClient/com.karcin.client.cfg:/opt/karaf/etc/com.karcin.client.cfg
+      - ./etcClient/com.karcin.cfg:/opt/karaf/etc/com.karcin.cfg
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - /home/gardiyan/Gardiyan/License:/home/gardiyan/Gardiyan/License
+      - /home/gardiyan/Gardiyan/ftp_gardiyan:/home/ftp_gardiyan:rw  
+    depends_on:
+      - postgres
+    command: >
+      sh -c "
+      iperf3 -s 127.0.0.1 -p 333 &
+      if [ ! -f /data/initialized ]; then
+        echo 'First time startup: Running db-deploy';
+        /opt/karaf/bin/karaf & sleep 120 && /opt/karaf/bin/client 'karcin:db-deploy';
+        touch /data/initialized;
+        wait;
+      else
+        echo 'Skipping db-deploy, already initialized';
+        /opt/karaf/bin/karaf;
+      fi"            
+    networks:
+      - gardiyan_network
+  #  mdm:
+#    image: nexusdev.cekino.com:5000/mdm:2.5.3.2
+#    container_name: mdm
+#    restart: always
+#    ports:
+#      - "7290:8081"
+#    volumes:
+#      - mdm_data:/data
+#      - ./etcMDM/com.karcin.mdm.datasource.cfg:/opt/karaf/etc/com.karcin.mdm.datasource.cfg
+#      - ./etcMDM/com.karcin.mdm.cfg:/opt/karaf/etc/com.karcin.mdm.cfg
+#      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+#    depends_on:
+#      db:
+#        condition: service_healthy
+#      auth:
+#        condition: service_started
+#    networks:
+#      - gardiyan_network
+  patch_frontend:
+    image: nexusdev.cekino.com:5005/patch_frontend:2.5.3.4
+    container_name: patch_frontend
+    restart: always
+    ports:
+      - "3006:80"
+    depends_on:
+      - postgres
+    volumes:
+      - patch_frontend_data:/data
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - /home/gardiyan/Gardiyan/License:/home/gardiyan/Gardiyan/License
+    networks:
+      - gardiyan_network
+
+  patch:
+    image: nexusdev.cekino.com:5005/patch:2.5.3.5
+    container_name: patch
+    restart: always
+    ports:
+      - "7291:8081"
+    volumes:
+      - patch_data:/data
+      - ./etcPatch/com.karcin.patch.datasource.cfg:/opt/karaf/etc/com.karcin.patch.datasource.cfg
+      - ./etcPatch/com.karcin.patch.cfg:/opt/karaf/etc/com.karcin.patch.cfg
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - /home/gardiyan/Gardiyan/License:/home/gardiyan/Gardiyan/License
+      - /home/gardiyan/Gardiyan/ftp_gardiyan:/home/ftp_gardiyan:rw
+    depends_on:
+      - postgres
+    networks:
+      - gardiyan_network
+    
+  admin_frontend:
+    image: nexusdev.cekino.com:5005/admin_frontend:latest
+    container_name: admin_frontend
+    restart: always
+    ports:
+      - "3003:80"
+    depends_on:
+      - postgres
+    volumes:
+      - admin_frontend_data:/data
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    networks:
+      - gardiyan_network
+
+  admin:
+    image: nexusdev.cekino.com:5005/admin:latest
+    container_name: admin
+    restart: always
+    ports:
+      - "7283:8081"
+    volumes:
+      - admin_data:/data
+      - ./etcAdmin/com.karcin.admin.datasource.cfg:/opt/karaf/etc/com.karcin.admin.datasource.cfg
+      - ./etcAdmin/com.karcin.admin.cfg:/opt/karaf/etc/com.karcin.admin.cfg
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    depends_on:
+      - postgres
+    command: >
+      sh -c "
+      if [ ! -f /data/initialized ]; then
+        echo 'First time startup: Running db-deploy';
+        /opt/karaf/bin/karaf & sleep 60 && /opt/karaf/bin/client 'karcin:db-deploy';
+        touch /data/initialized;
+        wait;
+      else
+        echo 'Skipping db-deploy, already initialized';
+        /opt/karaf/bin/karaf;
+      fi"            
+    networks:
+      - gardiyan_network
+
+  pam:
+    image: nexusdev.cekino.com:5005/pam:2.5.3.5
+    container_name: pam
+    restart: always
+    ports:
+      - "7289:8081"
+      - "5005:5005"
+    volumes:
+      - admin_data:/data
+      - ./etcPAM/com.karcin.pam.datasource.cfg:/opt/karaf/etc/com.karcin.pam.datasource.cfg
+      - ./etcPAM/com.karcin.pam.cfg:/opt/karaf/etc/com.karcin.pam.cfg
+      - ./etcPAM/karcin.pass:/opt/karaf/karcin.pass  
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    depends_on:
+      - postgres
+    networks:
+      - gardiyan_network
+
+  pam_frontend:
+    image: nexusdev.cekino.com:5005/pam_frontend:2.5.3.18
+    container_name: pam_frontend
+    restart: always
+    ports:
+      - "3009:80"
+    depends_on:
+      - postgres
+    volumes:
+      - pam_frontend_data:/data
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    networks:
+      - gardiyan_network
+
+  soc:
+    image: nexusdev.cekino.com:5005/soc:2.5.3.5
+    container_name: soc
+    restart: always
+    volumes:
+      - soc_data:/data
+      - ./etcSOC/com.karcin.soc.datasource.cfg:/opt/karaf/etc/com.karcin.soc.datasource.cfg
+      - ./etcSOC/com.karcin.soc.cfg:/opt/karaf/etc/com.karcin.soc.cfg
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    depends_on:
+      - postgres
+    networks:
+      - gardiyan_network
+
+  soc_frontend:
+    image: nexusdev.cekino.com:5005/soc_frontend:2.5.3.96
+    container_name: soc_frontend
+    restart: always
+    depends_on:
+      - postgres
+    volumes:
+      - soc_frontend_data:/data
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    networks:
+      - gardiyan_network
+
+  log_center:
+    image: nexusdev.cekino.com:5005/log_center:latest
+    container_name: log_center
+    restart: always
+    ports:
+      - "5224:5224"
+    volumes:
+      - log_center_data:/data
+      - ./etcLC/com.karcin.log.datasource.cfg:/opt/karaf/etc/com.karcin.log.datasource.cfg
+      - ./etcLC/com.karcin.log.cfg:/opt/karaf/etc/com.karcin.log.cfg
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    depends_on:
+      - postgres
+    networks:
+      - gardiyan_network
+
+  nginx:
+    image: nexusdev.cekino.com:5005/nginx:latest
+    container_name: nginx
+    restart: always
+    ports:
+      - "443:443"
+      - "80:80"  
+    volumes:
+      - nginx_data:/data
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/ssl/mycerts:/etc/nginx/certs:ro
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    depends_on:
+      - auth
+    networks:
+      - gardiyan_network
+
+  redis:
+    container_name: redis
+    ports:
+      - "6379:6379"
+    image: nexusdev.cekino.com:5005/redis:latest
+    restart: always
+    command: redis-server --requirepass Cekino.123! --save "" --appendonly no
+    volumes:
+      - redis_data:/data
+    networks:
+      - gardiyan_network
+
+  rabbitmq:
+    hostname: "rabbit1"
+    image: nexusdev.cekino.com:5005/rabbitmq:latest
+    container_name: rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+    depends_on:
+      - postgres
+    networks:
+      - gardiyan_network
+
+  mongodb:
+    image: nexusdev.cekino.com:5005/mongodb:latest
+    container_name: mongodb
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: gardiyan
+      MONGO_INITDB_ROOT_PASSWORD: Cekino.123!
+      MONGO_INITDB_DATABASE: karcin_network  
+    depends_on:
+      - postgres
+    networks:
+      - gardiyan_network
+
+  openfire:
+    image: nexusdev.cekino.com:5005/openfire:latest
+    container_name: openfire
+    ports:
+      - "9090:9090"
+      - "9091:9091"
+      - "5222:5222"
+      - "5269:5269"
+    restart: always
+    volumes:
+      - openfire_data:/opt/openfire
+      - /home/gardiyan/Gardiyan/openfire_backup/conf:/opt/openfire/conf:rw
+      - /home/gardiyan/Gardiyan/openfire_backup/logs:/opt/openfire/logs:rw
+      - /home/gardiyan/Gardiyan/openfire_backup/plugins:/opt/openfire/plugins:rw
+      - /home/gardiyan/Gardiyan/openfire_backup/resources:/opt/openfire/resources:rw
+      - /home/gardiyan/Gardiyan/openfire_backup/bin:/opt/openfire/bin:rw
+    depends_on:
+      - postgres
+      - rabbitmq
+    command: >
+      sh -c "tail -n0 -F /opt/openfire/logs/openfire.log & /opt/openfire/bin/openfire.sh"  
+    networks:
+      - gardiyan_network
+
+  vsftpd:
+    image: nexusdev.cekino.com:5005/vsftpd:latest
+    container_name: vsftpd
+    ports:
+      - "21:21"
+      - "69:69/udp"
+      - "40000-40010:40000-40010"
+      - "50000-50010:50000-50010"
+    volumes:
+      - /vsftpd_data:/var/lib/vsftpd/
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+    networks:
+      - gardiyan_network
+    restart: always
+
+  reverseproxy:
+    image: nexusdev.cekino.com:5005/reverseproxy:latest
+    container_name: reverseproxy
+    ports:
+      - "20022:22"
+      - "10000-10010:10000-10010"
+    volumes:
+      - ssh_data:/etc/ssh
+      - /home/gardiyan/Gardiyan/Repo:/ftp_gardiyan/ftp/receive_file/screenRecords:rw
+      - /home/gardiyan/Gardiyan/ftp_gardiyan:/home/ftp_gardiyan:rw
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw  
+    networks:
+      - gardiyan_network
+    restart: always
+
+  netdisco-backend:
+    image: nexusdev.cekino.com:5005/netdisco:latest-backend
+    hostname: netdisco-backend
+    init: true
+    restart: always
+    networks:
+      - gardiyan_network
+    volumes:
+      - "./netdisco/nd-site-local:/home/netdisco/nd-site-local"
+      - "./netdisco/config/deployment.yml:/home/netdisco/environments/deployment.yml:rw"
+    environment:
+      NETDISCO_DOMAIN: discover
+      NETDISCO_DB_HOST: postgres
+      NETDISCO_DB_USER: postgres
+      NETDISCO_DB_PASS: Cekino.123!
+      NETDISCO_DB_NAME: karcin_network
+    depends_on:
+      - postgres
+    dns_opt:
+      - 'ndots:0'
+      - 'timeout:1'
+      - 'retries:0'
+      - 'attempts:1'
+      - edns0
+      - trustad
+  
+  netdisco-web:
+    image: nexusdev.cekino.com:5005/netdisco:latest-web
+    hostname: netdisco-web
+    init: true
+    restart: always
+    networks:
+      - gardiyan_network
+    volumes:
+      - "./netdisco/nd-site-local:/home/netdisco/nd-site-local"
+      - "./netdisco/config:/home/netdisco/environments"
+    environment:
+      NETDISCO_DOMAIN: discover
+      NETDISCO_DB_HOST: postgres
+      IPV: 4
+      NETDISCO_DB_USER: postgres
+      NETDISCO_DB_PASS: Cekino.123!
+      NETDISCO_DB_NAME: karcin_network
+    ports:
+      - "5001:5000"
+    depends_on:
+      - postgres
+    dns_opt:
+      - 'ndots:0'
+      - 'timeout:1'
+      - 'retries:0'
+      - 'attempts:1'
+      - edns0
+      - trustad
+  
+  netdisco-do:
+    image: nexusdev.cekino.com:5005/netdisco/netdisco:latest-do
+    hostname: netdisco-backend
+    volumes:
+      - "./netdisco/nd-site-local:/home/netdisco/nd-site-local"
+      - "./netdisco/config:/home/netdisco/environments"
+    environment:
+      NETDISCO_DOMAIN: discover
+      NETDISCO_DB_HOST: postgres
+      NETDISCO_DB_USER: postgres
+      NETDISCO_DB_PASS: Cekino.123!
+      NETDISCO_DB_NAME: karcin_network
+    depends_on:
+      - postgres
+  
+  network:
+    image: nexusdev.cekino.com:5005/network:latest
+    container_name: network
+    restart: always
+    networks:
+      - gardiyan_network  
+    ports:
+      - "8191:8181"
+    volumes:
+      - network_data:/data
+      - ./etcNetwork/com.karcin.network.datasource.cfg:/opt/karaf/etc/com.karcin.network.datasource.cfg
+      - ./etcNetwork/com.karcin.network.cfg:/opt/karaf/etc/com.karcin.network.cfg
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw
+      - ./netdisco/config/deployment.yml:/home/gardiyan/netdisco/config/deployment.yml:rw 
+    depends_on:
+      - postgres
+    command: >
+      sh -c "
+      if [ ! -f /data/initialized ]; then
+        echo 'First time startup: Running db-deploy';
+        /opt/karaf/bin/karaf & sleep 60 && /opt/karaf/bin/client 'karcin:db-deploy';
+        touch /data/initialized;
+        wait;
+      else
+        echo 'Skipping db-deploy, already initialized';
+        /opt/karaf/bin/karaf;
+      fi"
+
+  network_frontend:
+    image: nexusdev.cekino.com:5005/network_frontend:latest
+    container_name: network_frontend
+    restart: always
+    ports:
+      - "3007:80"
+    networks:
+      - gardiyan_network
+    depends_on:
+      - postgres
+    volumes:
+      - network_frontend_data:/data
+      - /home/gardiyan/Gardiyan/Repo:/home/gardiyan/Repo:rw  
+
+  trap-listener:
+    image: nexusdev.cekino.com:5005/trap_listener:1.0.0.9
+    container_name: karcin_trap-listener
+    depends_on:
+      - mongodb
+    ports:
+      - "162:162/udp"
+    environment:
+      MONGO_HOST: "mongodb"
+      MONGO_PORT: "27017"
+      MONGO_PASSWORD: "Cekino.123!"
+      MONGO_USER: "gardiyan"
+      MONGO_DB_NAME: "karcin_network"
+      COLLECTION_NAME: "trap"
+    networks:
+      - gardiyan_network    
+
+  syslog-listener:
+    image: nexusdev.cekino.com:5005/syslog_listener:1.0.0.3
+    container_name: syslog-listener
+    restart: always  
+    depends_on:
+      - mongodb
+    ports:
+      - "515:514/udp"
+    environment:
+      MONGO_HOST: "mongodb"
+      MONGO_PORT: "27017"
+      MONGO_PASSWORD: "Cekino.123!"
+      MONGO_USER: "gardiyan"
+      MONGO_DB_NAME: "karcin_network"
+      COLLECTION_NAME: "syslog"
+    networks:
+      - gardiyan_network
+
+  network-worker:
+    image: nexusdev.cekino.com:5005/network_worker:latest
+    container_name: network-worker
+    restart: always
+    ports:
+      - "8091:8091"
+    networks:
+      - gardiyan_network
+    environment:
+      MONGODB_URI: mongodb://gardiyan:Cekino.123!@mongodb:27017
+      MONGODB_DATABASE: karcin_network
+      MAX_THREADS: 20
+    depends_on:
+      - mongodb
+
+  zookeeper:
+    image: nexusdev.cekino.com:5005/cp-zookeeper:latest
+    container_name: zookeeper
+    restart: always
+    networks:
+      - gardiyan_network
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+    healthcheck:
+      test: ["CMD", "echo", "ruok", "|", "nc", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  kafka:
+    image: nexusdev.cekino.com:5005/cp-kafka:latest
+    container_name: kafka
+    restart: always
+    networks:
+      - gardiyan_network
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1 # 1 adet lun açıccak
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      KAFKA_LOG_RETENTION_MS: 60000             # 1 dakika veri tutuyor istenirse artırabilinir
+      KAFKA_LOG_SEGMENT_MS: 30000                # 30 saniyelik segment
+      KAFKA_DELETE_RETENTION_MS: 1000
+      KAFKA_LOG_RETENTION_CHECK_INTERVAL_MS: 10000  
+      KAFKA_OFFSETS_RETENTION_MINUTES: 5
+      KAFKA_NUM_PARTITIONS: 1  
+    ports:
+      - "9092:9092"
+    healthcheck:
+      test: ["CMD", "kafka-topics", "--list", "--bootstrap-server", "kafka:9092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5 
+
+  goflow2:
+    image: nexusdev.cekino.com:5005/goflow2:latest
+    container_name: goflow2
+    restart: always
+    networks:
+      - gardiyan_network
+    ports:
+      - "2055:2055/udp" # NetFlow
+      - "6343:6343/udp" # sFlow
+    depends_on:
+      - kafka
+    command: >
+      -transport=kafka
+      -transport.kafka.brokers=kafka:9092
+      -transport.kafka.topic=flows-messages
+      -transport.kafka.version=2.8.0
+      -format=json
+      -loglevel=debug      
+
+  grafana:
+    image: nexusdev.cekino.com:5005/grafana:latest
+    container_name: grafana
+    restart: always
+    networks:
+      - gardiyan_network
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=Gardiyan.2025!
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_SECURITY_COOKIE_SAMESITE=none
+      - GF_FEATURE_TOGGLES_DASHBOARDSCENESOLO=true
+      - GF_SERVER_ROOT_URL=http://grafana:3000
+      - GF_SERVER_SERVE_FROM_SUB_PATH=true
+    volumes:
+      - ./grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards:/grafana/dashboards
+      - grafana_data:/var/lib/grafana  
+    depends_on:
+      - influxdb
+
+  influxdb:
+    image: nexusdev.cekino.com:5005/influxdb:latest
+    container_name: influxdb
+    restart: always
+    networks:
+      - gardiyan_network
+    ports:
+      - "8086:8086"
+    volumes:
+      - ./influxdb:/var/lib/influxdb2
+    environment:
+      - DOCKER_INFLUXDB_INIT_MODE=setup
+      - DOCKER_INFLUXDB_INIT_USERNAME=admin
+      - DOCKER_INFLUXDB_INIT_PASSWORD=Gardiyan.2025!
+      - DOCKER_INFLUXDB_INIT_ORG=gardiyan
+      - DOCKER_INFLUXDB_INIT_BUCKET=netflow
+      - DOCKER_INFLUXDB_INIT_ADMIN_TOKEN=xcbA_bDTtj9y1vjdWc6h1f0ErAI8q-SH2Lb_xfC3uz8g_k6dKv-_eOXd_cRKDB0na1k4BTmIWOk9HROimBPgNA==
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8086/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+  influx-network:
+    image: nexusdev.cekino.com:5005/influx:latest
+    container_name: influx-network
+    networks:
+      - gardiyan_network
+    restart: always
+    ports:
+      - "8787:8383"
+    environment:
+      INFLUX_URL: http://influxdb:8086/
+      INFLUX_TOKEN: xcbA_bDTtj9y1vjdWc6h1f0ErAI8q-SH2Lb_xfC3uz8g_k6dKv-_eOXd_cRKDB0na1k4BTmIWOk9HROimBPgNA==
+      INFLUX_ORGANIZATION: gardiyan
+      INFLUX_BUCKET: netflow        
+
+  telegraf:
+    image: nexusdev.cekino.com:5005/telegraf:latest
+    container_name: telegraf
+    restart: always
+    networks:
+      - gardiyan_network
+    depends_on:
+      - kafka
+      - influxdb
+    volumes:
+      - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+    environment:
+      HOSTNAME: telegraf
+    user: root 
+    privileged: true
+     
+  prometheus:
+    image: nexusdev.cekino.com:5005/prom/prometheus:latest
+    container_name: prometheus
+    networks:
+      - gardiyan_network
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=7d"
+      - "--storage.tsdb.retention.size=10GB"
+      - "--storage.tsdb.wal-compression"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    ports:
+      - "9095:9090"
+volumes:
+  db_data:
+  auth_frontend_data:
+  auth_data:
+  admin_frontend_data:
+  admin_data:
+  client_data:
+  client_frontend_data:
+  pam_frontend_data:
+  mdm_frontend_data:
+  mdm_data:
+  log_center_data:
+  nginx_data:
+  redis_data:
+  rabbitmq_data:
+  mongodb_data:
+  openfire_data:
+  guacamole_data:
+  vsftpd_data:
+  ssh_data:  
+  portainer_data: 
+  patch_frontend_data:
+  patch_data:
+  soc_data:
+  soc_frontend_data:
+  network_data:
+  grafana_data:
+  netdisco_data:
+  network_frontend_data:
+  prometheus_data:  
+
+networks:
+  gardiyan_network:
+    driver: bridge

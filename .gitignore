@@ -1,0 +1,7 @@
+*.log
+*.tmp
+*.bak
+*.class
+*.pyc
+node_modules/
+__pycache__/

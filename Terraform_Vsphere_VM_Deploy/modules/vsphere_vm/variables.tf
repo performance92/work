@@ -1,0 +1,9 @@
+variable "vm_name" {}
+variable "cpu" {}
+variable "memory" {}
+variable "network_name" {}
+variable "host_name" {}
+variable "template_name" {}
+variable "datacenter_name" {}
+variable "datacenter_id" {}
+variable "host_datastore_map" {}

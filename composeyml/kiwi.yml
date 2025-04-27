@@ -1,0 +1,40 @@
+services:
+    db:
+        container_name: kiwi_db
+        image: postgres:latest
+        volumes:
+            - /mnt/docker/app2/kiwi/data2:/var/lib/postgresql/data
+        restart: always
+        ports:
+          - 5432:5432
+        environment:
+            POSTGRES_DB: kiwi
+            POSTGRES_USER: kiwi
+            POSTGRES_PASSWORD: kiwi
+
+    web:
+        container_name: kiwi_web
+        depends_on:
+            - db
+        restart: always
+        image: kiwitcms/kiwi:latest
+        ports:
+          - 8880:8080
+          - 8443:8443
+          #  - 80:8080
+          #  - 443:8443  
+        volumes:
+            - ./uploads:/Kiwi/uploads:Z
+            - /mnt/docker/app2/kiwi/etc:/Kiwi/etc
+        environment:
+            KIWI_DB_ENGINE: django.db.backends.postgresql
+            KIWI_DB_HOST: kiwi_db
+            KIWI_DB_PORT: 5432
+            KIWI_DB_NAME: kiwi
+            KIWI_DB_USER: kiwi
+            KIWI_DB_PASSWORD: kiwi
+        cap_drop:
+          - ALL
+
+volumes:
+    uploads:

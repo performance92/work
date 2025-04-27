@@ -1,0 +1,180 @@
+version: "3.9"
+
+services:
+
+  vulnerability-tests:
+    image: nexusdev.cekino.com:5005/vulnerability-tests:latest
+    environment:
+      STORAGE_PATH: /var/lib/openvas/22.04/vt-data/nasl
+    networks:
+      - gardiyan_network
+    volumes:
+      - vt_data_vol:/mnt
+
+  notus-data:
+    image: nexusdev.cekino.com:5005/notus-data:latest
+    networks:
+      - gardiyan_network
+    volumes:
+      - notus_data_vol:/mnt
+
+  scap-data:
+    image: nexusdev.cekino.com:5005/scap-data:latest
+    networks:
+      - gardiyan_network
+    volumes:
+      - scap_data_vol:/mnt
+
+  cert-bund-data:
+    image: nexusdev.cekino.com:5005/cert-bund-data:latest
+    networks:
+      - gardiyan_network
+    volumes:
+      - cert_data_vol:/mnt
+
+  dfn-cert-data:
+    image: nexusdev.cekino.com:5005/dfn-cert-data:latest
+    networks:
+      - gardiyan_network
+    volumes:
+      - cert_data_vol:/mnt
+    depends_on:
+      - cert-bund-data
+
+  data-objects:
+    image: nexusdev.cekino.com:5005/data-objects:latest
+    networks:
+      - gardiyan_network
+    volumes:
+      - data_objects_vol:/mnt
+
+  report-formats:
+    image: nexusdev.cekino.com:5005/report-formats:latest
+    networks:
+      - gardiyan_network
+    volumes:
+      - data_objects_vol:/mnt
+    depends_on:
+      - data-objects
+
+  gpg-data:
+    image: nexusdev.cekino.com:5005/gpg-data:latest
+    volumes:
+      - gpg_data_vol:/mnt
+
+  redis-server:
+    image: nexusdev.cekino.com:5005/redis-server:latest
+    restart: on-failure
+    volumes:
+      - redis_socket_vol:/run/redis/
+
+  pg-gvm:
+    image: nexusdev.cekino.com:5005/pg-gvm:stable
+    restart: on-failure
+    volumes:
+      - psql_data_vol:/var/lib/postgresql
+      - psql_socket_vol:/var/run/postgresql
+
+  gvmd:
+    image: nexusdev.cekino.com:5005/gvmd:stable
+    restart: on-failure
+    volumes:
+      - gvmd_data_vol:/var/lib/gvm
+      - scap_data_vol:/var/lib/gvm/scap-data/
+      - cert_data_vol:/var/lib/gvm/cert-data
+      - data_objects_vol:/var/lib/gvm/data-objects/gvmd
+      - vt_data_vol:/var/lib/openvas/plugins
+      - psql_data_vol:/var/lib/postgresql
+      - gvmd_socket_vol:/run/gvmd
+      - ospd_openvas_socket_vol:/run/ospd
+      - psql_socket_vol:/var/run/postgresql
+      - /home/server/Gardiyan/gardiyan-openvas-docker:/home  
+    depends_on:
+      - pg-gvm
+      - scap-data
+      - cert-bund-data
+      - dfn-cert-data
+      - data-objects
+      - report-formats
+
+  gsa:
+    image: nexusdev.cekino.com:5005/gsa:stable
+    restart: on-failure
+    ports:
+      - "8050:80"
+    volumes:
+      - gvmd_socket_vol:/run/gvmd
+    depends_on:
+      - gvmd
+
+  spd-openvas:
+    image: nexusdev.cekino.com:5005/ospd-openvas:stable
+    restart: on-failure
+    hostname: ospd-openvas.local
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    security_opt:
+      - seccomp=unconfined
+      - apparmor=unconfined
+    command:
+      [
+        "ospd-openvas",
+        "-f",
+        "--config",
+        "/etc/gvm/ospd-openvas.conf",
+        "--notus-feed-dir",
+        "/var/lib/notus/advisories",
+        "-m",
+        "666"
+      ]
+    volumes:
+      - gpg_data_vol:/etc/openvas/gnupg
+      - vt_data_vol:/var/lib/openvas/plugins
+      - notus_data_vol:/var/lib/notus
+      - ospd_openvas_socket_vol:/run/ospd
+      - redis_socket_vol:/run/redis/
+      - openvas_data_vol:/etc/openvas/
+      - openvas_log_data_vol:/var/log/openvas
+    depends_on:
+      - redis-server
+      - gpg-data
+      - vulnerability-tests
+      - configure-openvas
+
+  configure-openvas:
+    image: nexusdev.cekino.com:5005/openvas-scanner:stable
+    volumes:
+      - openvas_data_vol:/etc/openvas
+      - openvas_log_data_vol:/var/log/openvas
+    command:
+      - /bin/sh
+      - -c
+      - |
+        printf "table_driven_lsc = yes\nopenvasd_server = http://openvasd:80\n" > /etc/openvas/openvas.conf
+        sed "s/127/128/" /etc/openvas/openvas_log.conf | sed 's/gvm/openvas/' > /etc/openvas/openvas_log.conf
+        chmod 644 /etc/openvas/openvas.conf
+        chmod 644 /etc/openvas/openvas_log.conf
+        touch /var/log/openvas/openvas.log
+        chmod 666 /var/log/openvas/openvas.log
+    depends_on:
+      - redis-server
+volumes:
+  gpg_data_vol:
+  scap_data_vol:
+  cert_data_vol:
+  data_objects_vol:
+  gvmd_data_vol:
+  psql_data_vol:
+  vt_data_vol:
+  notus_data_vol:
+  psql_socket_vol:
+  gvmd_socket_vol:
+  ospd_openvas_socket_vol:
+  redis_socket_vol:
+  openvas_data_vol:
+  openvas_log_data_vol:
+
+networks:
+  gardiyan_network:
+    driver: bridge

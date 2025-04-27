@@ -1,0 +1,71 @@
+FROM guacamole/guacamole:latest
+#FROM guacamole/guacamole:1.5.0
+USER root
+
+
+RUN apt-get update && apt-get install -y \
+    ffmpeg \
+    build-essential \
+    libguac-dev \
+    libcairo2-dev \
+    libjpeg-turbo8-dev \
+    libpng-dev \
+    libossp-uuid-dev \
+    libavcodec-dev \
+    libavformat-dev \
+    libavutil-dev \
+    libswscale-dev \
+    libssl-dev \
+    libogg-dev \
+    libvorbis-dev \
+    libvorbisenc2 \
+    libpulse-dev \
+    libpango1.0-dev \
+    libpangocairo-1.0-0 \
+    freerdp2-dev \
+    libssh2-1-dev \
+    libtelnet-dev \
+    libwebp-dev \
+    libwebsockets-dev \
+    git \
+    autoconf \
+    automake \
+    libtool \
+    unzip \
+    net-tools \
+    gzip \
+    nano \
+    vim \
+    inotify-tools \
+    sudo \
+    cmake \
+    wget \
+    && apt-get clean
+
+RUN git clone https://github.com/LibVNC/libvncserver.git /tmp/libvncserver \
+    && cd /tmp/libvncserver \
+    && cmake . \
+    && make \
+    && make install \
+    && ldconfig \
+    && rm -rf /tmp/libvncserver
+
+#RUN git clone https://github.com/apache/guacamole-server.git /tmp/guacamole-server \
+#    && cd /tmp/guacamole-server \
+#    && autoreconf -fi \
+#    && ./configure --with-init-dir=/etc/init.d \
+#    && make \
+#    && make install \
+#    && ldconfig \
+#    && rm -rf /tmp/guacamole-server
+
+RUN echo "umask 000" >> /etc/profile
+
+RUN echo "guacamole ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+#COPY video-convertor.war /home/guacamole/tomcat/webapps
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+USER guacamole
+
+ENTRYPOINT ["/entrypoint.sh"]

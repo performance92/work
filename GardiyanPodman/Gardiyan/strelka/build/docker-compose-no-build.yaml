@@ -1,0 +1,107 @@
+version: '3.7'
+
+networks:
+  net:
+
+volumes:
+  logs:
+
+services:
+  frontend:
+    image: nexusdev.cekino.com:5005/target/strelka-frontend:latest
+    command: strelka-frontend
+    pull_policy: always
+    ports:
+      - 57314:57314  # must match the port in frontend.yaml
+    networks:
+      - net
+    volumes:
+      - ../configs/go/frontend/:/etc/strelka/:ro
+      - logs:/var/log/strelka/
+    restart: unless-stopped
+    depends_on:
+      - coordinator
+      - gatekeeper
+
+  backend:
+    image: nexusdev.cekino.com:5005/target/strelka-backend:latest
+    command: strelka-backend
+    pull_policy: always
+    shm_size: 512mb  # increase as necessary, required for some scanners
+    networks:
+      - net
+    volumes:
+      - ../configs/python/backend/:/etc/strelka/:ro
+    restart: unless-stopped
+    depends_on:
+      - coordinator
+    # deploy:
+    #   mode: replicated
+    #   replicas: 2
+    #   endpoint_mode: vip
+
+  manager:
+    image: nexusdev.cekino.com:5005/target/strelka-manager:latest
+    command: strelka-manager
+    restart: unless-stopped
+    networks:
+      - net
+    volumes:
+      - ../configs/go/manager/:/etc/strelka/:ro
+    depends_on:
+      - coordinator
+
+  coordinator:
+    image: nexusdev.cekino.com:5005/redis:alpine
+    command: redis-server --save "" --appendonly no  # alt: use config file via volume mapping
+    restart: unless-stopped
+    networks:
+      - net
+
+  gatekeeper:
+    image: nexusdev.cekino.com:5005/redis:alpine
+    command: redis-server --save "" --appendonly no --maxmemory-policy allkeys-lru  # alt: use config file via volume mapping
+    restart: unless-stopped
+    networks:
+      - net
+
+  jaeger:
+    image: nexusdev.cekino.com:5005/jaegertracing/all-in-one:1.42
+    restart: unless-stopped
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - net
+    ports:
+      - 16686:16686    # HTTP query     frontend UI
+      - 6831:6831/udp  # UDP  agent     accept jaeger.thrift over Thrift-compact protocol (used by most SDKs)
+      - 4317:4317      # HTTP collector accept OpenTelemetry Protocol (OTLP) over gRPC
+      - 4318:4318      # HTTP collector accept OpenTelemetry Protocol (OTLP) over HTTP
+      - 14268:14268    # HTTP collector accept jaeger.thrift
+
+  ui:
+    image: nexusdev.cekino.com:5005/target/strelka-ui:latest
+    restart: unless-stopped
+    pull_policy: always
+    environment:
+      - DATABASE_HOST=postgresdb
+      - DATABASE_NAME=strelka_ui
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_USERNAME=postgres
+      - STRELKA_HOST=frontend
+    networks:
+      - net
+    ports:
+      - "9980:8080"
+    depends_on:
+      - postgresdb
+
+  postgresdb:
+    image: nexusdev.cekino.com:5005/bitnami/postgresql:11
+    restart: unless-stopped
+    environment:
+      - POSTGRESQL_DATABASE=strelka_ui
+      - POSTGRESQL_PASSWORD=postgres
+      - POSTGRESQL_USERNAME=postgres
+    networks:
+      - net
