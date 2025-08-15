@@ -8,6 +8,7 @@ volumes:
 networks:
   demo: {}
 
+# ---- ANCHORS ----
 x-n8n: &service-n8n
   image: n8nio/n8n:latest
   networks: ['demo']
@@ -47,6 +48,7 @@ x-ollama: &service-ollama
     retries: 20
     start_period: 10s
 
+# ---- SERVICES ----
 services:
   postgres:
     image: postgres:16-alpine
@@ -76,25 +78,21 @@ services:
       ollama:
         condition: service_healthy
 
-  # ---- OLLAMA (yalın CPU profili varsayılan) ----
+  # CPU (varsayılan)
   ollama:
     <<: *service-ollama
     profiles: ["cpu"]
 
-  # NVIDIA GPU profili (isteğe bağlı)
+  # NVIDIA GPU (önerilen basit yöntem: gpus: all)
   ollama-gpu:
     <<: *service-ollama
     profiles: ["gpu-nvidia"]
-    deploy: {}
-    device_requests:
-      - driver: nvidia
-        count: 1
-        capabilities: ["gpu"]
+    gpus: all
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
 
-  # AMD ROCm profili (isteğe bağlı)
+  # AMD ROCm
   ollama-gpu-amd:
     <<: *service-ollama
     image: ollama/ollama:rocm
